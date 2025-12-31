@@ -36,21 +36,43 @@ Skills MCP Controller 是一个基于 [Model Context Protocol (MCP)](https://mod
 
 ### 安装
 
+#### 方式一：npm 安装（推荐）
+
 ```bash
-# 克隆仓库
+npm install -g skillscontroller
+```
+
+#### 方式二：Homebrew 安装（macOS/Linux）
+
+```bash
+brew install marovole/tap/skillscontroller
+```
+
+#### 方式三：从源码安装
+
+```bash
 git clone https://github.com/marovole/skillscontroller.git
 cd skillscontroller
-
-# 安装依赖
 npm install
-
-# 构建
-npm run build
 ```
 
 ### 配置 MCP
 
 在你的 Claude Code 配置文件中添加（通常是 `~/.claude/.mcp.json` 或项目的 `.mcp.json`）：
+
+**npm/全局安装：**
+
+```json
+{
+  "mcpServers": {
+    "skills": {
+      "command": "skillscontroller"
+    }
+  }
+}
+```
+
+**从源码安装：**
 
 ```json
 {
@@ -130,8 +152,9 @@ skillscontroller/
 ├── anthropic-skills/            # Anthropic 官方技能库
 ├── claudekit-skills/            # ClaudeKit 技能库
 ├── awesome-claude-skills/       # 社区技能库
-├── bundles/                     # 技能包配置
-├── test/                        # 测试文件
+├── composio-skills/             # Composio 技能库
+├── voltagent-skills/            # Voltagent 技能库
+├── skills-controller/           # 核心代码
 ├── package.json
 ├── tsconfig.json
 ├── .mcp.json                    # MCP 配置示例
@@ -163,9 +186,6 @@ skillscontroller list
 
 # 搜索技能
 skillscontroller search "database"
-
-# 安装技能包
-skillscontroller install bundles/fullstack-react.yaml
 ```
 
 ---

@@ -7,20 +7,44 @@
   "bin": {
     "skillscontroller": "./dist/cli.js"
   },
+  "files": [
+    "dist",
+    "anthropic-skills",
+    "awesome-claude-skills",
+    "claudekit-skills",
+    "composio-skills",
+    "voltagent-skills",
+    "skills-controller",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/skills-controller.js",
-    "dev": "tsx src/skills-controller.ts"
+    "dev": "tsx src/skills-controller.ts",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "claude",
     "claude-code",
     "skills",
     "mcp",
-    "ai-tools"
+    "ai-tools",
+    "model-context-protocol"
   ],
   "author": "marovole",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marovole/skillscontroller.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marovole/skillscontroller/issues"
+  },
+  "homepage": "https://github.com/marovole/skillscontroller#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "yaml": "^2.8.2"
