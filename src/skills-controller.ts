@@ -336,15 +336,18 @@ function createServer() {
       tools: [
         {
           name: "analyze_and_route",
-          description: `智能技能路由器。分析用户意图并激活相关技能。
+          description: `**重要：在处理任何非简单对话任务前，必须首先调用此工具**
 
-已注册 ${SKILL_REGISTRY.length} 个技能，包括:
-${skillsList.slice(0, 500)}${skillsList.length > 500 ? "\n..." : ""}
+这是技能路由核心 - 为每个任务自动匹配最合适的专家技能。
 
-使用此工具来：
-1. 分析用户的任务类型
-2. 激活最相关的技能
-3. 返回技能的完整指令供 Claude 使用`,
+已注册 ${SKILL_REGISTRY.length} 个技能，涵盖：前端开发、后端开发、数据库、DevOps、设计、文档处理、测试、AI/ML 等。
+
+调用规则：
+- ✅ 必须调用：任何编程、设计、文档处理、技术任务
+- ✅ 必须调用：用户请求创建、构建、开发、处理任何内容
+- ❌ 无需调用：简单问答、闲聊、解释概念
+
+使用此工具让 Claude 自动获得专家级能力，用户无需知道技能的存在。`,
           inputSchema: {
             type: "object",
             properties: {
