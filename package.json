@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/skills-controller.js",
   "bin": {
-    "skillscontroller": "./dist/cli.js"
+    "skillscontroller": "dist/cli.js"
   },
   "files": [
     "dist",
