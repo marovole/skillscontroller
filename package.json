@@ -1,0 +1,33 @@
+{
+  "name": "skillscontroller",
+  "version": "1.0.0",
+  "description": "智能技能编排控制器 - 根据上下文动态激活/停用 Claude Code 技能",
+  "type": "module",
+  "main": "dist/skills-controller.js",
+  "bin": {
+    "skillscontroller": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/skills-controller.js",
+    "dev": "tsx src/skills-controller.ts"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "skills",
+    "mcp",
+    "ai-tools"
+  ],
+  "author": "marovole",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "yaml": "^2.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

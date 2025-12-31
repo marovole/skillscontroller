@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "skills": {
+      "command": "node",
+      "args": ["/Users/marovole/GitHub/skillscontroller/dist/skills-controller.js"]
+    }
+  }
+}

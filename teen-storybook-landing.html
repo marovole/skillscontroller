@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>故事星球 | 少年故事书探索之旅</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --secondary: #00CEC9;
+            --accent: #FD79A8;
+            --dark: #0F0F23;
+            --darker: #080814;
+            --light: #DFE6E9;
+            --gradient-1: linear-gradient(135deg, #6C5CE7 0%, #00CEC9 100%);
+            --gradient-2: linear-gradient(135deg, #FD79A8 0%, #FDCB6E 100%);
+            --gradient-3: linear-gradient(135deg, #A29BFE 0%, #6C5CE7 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .nebula-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            top: -200px;
+            right: -200px;
+        }
+
+        .nebula-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -100px;
+            left: -100px;
+            animation-delay: -10s;
+        }
+
+        .nebula-3 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 20px) scale(0.9); }
+            75% { transform: translate(20px, 30px) scale(1.05); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(8, 8, 20, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 1rem 5%;
+            box-shadow: 0 5px 30px rgba(108, 92, 231, 0.2);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '✦';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.95rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-1);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+
+        .cta-button {
+            padding: 0.8rem 2rem;
+            background: var(--gradient-1);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 5% 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            color: var(--light);
+            opacity: 0.8;
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero-button {
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .hero-button.primary {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+        }
+
+        .hero-button.secondary {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid var(--primary);
+        }
+
+        .hero-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 2px;
+            height: 40px;
+            background: var(--gradient-1);
+            margin: 0 auto;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Section Styles */
+        section {
+            padding: 6rem 5%;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--light);
+            opacity: 0.7;
+            margin-bottom: 4rem;
+            font-size: 1.1rem;
+        }
+
+        /* Books Grid */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .book-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .book-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-1);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .book-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(108, 92, 231, 0.3);
+            border-color: var(--primary);
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 250px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-card:nth-child(2) .book-cover {
+            background: var(--gradient-2);
+        }
+
+        .book-card:nth-child(3) .book-cover {
+            background: var(--gradient-3);
+        }
+
+        .book-cover::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .book-info {
+            padding: 1.5rem;
+        }
+
+        .book-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .book-author {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .book-description {
+            color: var(--light);
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .book-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .book-link:hover {
+            color: var(--secondary);
+            padding-left: 10px;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(108, 92, 231, 0.1);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .feature-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+
+        .feature-description {
+            color: var(--light);
+            opacity: 0.7;
+            font-size: 0.95rem;
+        }
+
+        /* Testimonials */
+        .testimonials-container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials-track {
+            display: flex;
+            animation: scroll 30s linear infinite;
+        }
+
+        .testimonials-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .testimonial-card {
+            flex-shrink: 0;
+            width: 400px;
+            padding: 2rem;
+            margin-right: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: var(--light);
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .testimonial-name {
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        .testimonial-role {
+            font-size: 0.85rem;
+            color: var(--secondary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 8rem 5%;
+            background: linear-gradient(180deg, transparent, rgba(108, 92, 231, 0.1), transparent);
+        }
+
+        .cta-content h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-content p {
+            color: var(--light);
+            opacity: 0.8;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .cta-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: 2px solid rgba(108, 92, 231, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: 1rem;
+            min-width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .cta-input::placeholder {
+            color: var(--light);
+            opacity: 0.5;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 5% 2rem;
+            border-top: 1px solid rgba(108, 92, 231, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+        }
+
+        .footer-section h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section ul li a {
+            color: var(--light);
+            opacity: 0.7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            opacity: 1;
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light);
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero-button {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .cta-form {
+                flex-direction: column;
+            }
+
+            .cta-input {
+                width: 100%;
+            }
+
+            .testimonial-card {
+                width: 300px;
+            }
+        }
+
+        /* Reduce Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <a href="#" class="logo">故事星球</a>
+        <ul class="nav-links">
+            <li><a href="#books">精选书籍</a></li>
+            <li><a href="#features">特色优势</a></li>
+            <li><a href="#testimonials">读者评价</a></li>
+            <li><a href="#about">关于我们</a></li>
+        </ul>
+        <button class="cta-button">开始阅读</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>探索无限故事的宇宙</h1>
+            <p class="hero-subtitle">为勇敢的少年们打造的沉浸式阅读体验。在这里，每一个故事都是一次冒险，每一页都是新的发现。</p>
+            <div class="hero-buttons">
+                <a href="#books" class="hero-button primary">探索书库</a>
+                <a href="#features" class="hero-button secondary">了解更多</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- Featured Books -->
+    <section id="books">
+        <h2 class="section-title">精选故事</h2>
+        <p class="section-subtitle">发现最受欢迎的少年冒险故事</p>
+        <div class="books-grid">
+            <div class="book-card">
+                <div class="book-cover">🚀</div>
+                <div class="book-info">
+                    <h3 class="book-title">星际迷航：少年探险家</h3>
+                    <p class="book-author">作者：李星河</p>
+                    <p class="book-description">跟随15岁的宇航员学员小明，踏上穿越银河系的冒险之旅，发现神秘的古代文明。</p>
+                    <a href="#" class="book-link">立即阅读 →</a>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover">🐉</div>
+                <div class="book-info">
+                    <h3 class="book-title">龙族学院</h3>
+                    <p class="book-author">作者：王凤凰</p>
+                    <p class="book-description">在一所隐藏在云端的魔法学院里，少年度过了最不可思议的学年，解开古老的龙族秘密。</p>
+                    <a href="#" class="book-link">立即阅读 →</a>
+                </div>
+            </div>
+            <div class="book-card">
+                <div class="book-cover">⚡</div>
+                <div class="book-info">
+                    <h3 class="book-title">超能觉醒</h3>
+                    <p class="book-author">作者：张雷霆</p>
+                    <p class="book-description">普通高中生突然发现拥有超能力，却不知道这股力量将如何改变他的人生和整个世界。</p>
+                    <a href="#" class="book-link">立即阅读 →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features">
+        <h2 class="section-title">为什么选择我们</h2>
+        <p class="section-subtitle">为少年读者量身打造的阅读平台</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span class="feature-icon">📚</span>
+                <h3 class="feature-title">精选优质内容</h3>
+                <p class="feature-description">每本书都经过专业编辑团队精心挑选，确保内容积极向上，富有启发性。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎮</span>
+                <h3 class="feature-title">互动式阅读</h3>
+                <p class="feature-description">沉浸式的阅读体验，配合精美的插图和音效，让故事栩栩如生。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🏆</span>
+                <h3 class="feature-title">阅读成就系统</h3>
+                <p class="feature-description">完成阅读挑战，解锁成就徽章，与其他读者分享你的阅读历程。</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">👥</span>
+                <h3 class="feature-title">社区交流</h3>
+                <p class="feature-description">加入读者社区，与志同道合的少年们一起讨论故事，分享创意。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials">
+        <h2 class="section-title">读者之声</h2>
+        <p class="section-subtitle">听听其他年轻读者怎么说</p>
+        <div class="testimonials-container">
+            <div class="testimonials-track">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"这里的故事太精彩了！我第一次发现自己这么喜欢阅读，现在每天都会来读一个新的章节。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👦</div>
+                        <div>
+                            <div class="testimonial-name">陈小明</div>
+                            <div class="testimonial-role">14岁，北京</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"《星际迷航》系列让我对科学产生了浓厚兴趣，现在我的梦想是成为一名真正的宇航员！"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👧</div>
+                        <div>
+                            <div class="testimonial-name">林晓宇</div>
+                            <div class="testimonial-role">15岁，上海</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"界面设计超级酷炫，阅读体验很棒。我还会和同学们一起在社区讨论剧情发展。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👦</div>
+                        <div>
+                            <div class="testimonial-name">王浩然</div>
+                            <div class="testimonial-role">13岁，广州</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"这里的故事让我明白了很多道理，也学会了勇敢面对困难。强烈推荐给所有同龄人！"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👧</div>
+                        <div>
+                            <div class="testimonial-name">张雨萱</div>
+                            <div class="testimonial-role">16岁，深圳</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"作为家长，看到孩子从不喜欢阅读变成现在每天都期待新故事，真的很欣慰。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨</div>
+                        <div>
+                            <div class="testimonial-name">刘先生</div>
+                            <div class="testimonial-role">家长，杭州</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"《龙族学院》是我读过最棒的故事，里面的角色就像真实的朋友一样，陪伴我成长。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👦</div>
+                        <div>
+                            <div class="testimonial-name">赵天宇</div>
+                            <div class="testimonial-role">14岁，成都</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Duplicate for seamless loop -->
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"这里的故事太精彩了！我第一次发现自己这么喜欢阅读，现在每天都会来读一个新的章节。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👦</div>
+                        <div>
+                            <div class="testimonial-name">陈小明</div>
+                            <div class="testimonial-role">14岁，北京</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"《星际迷航》系列让我对科学产生了浓厚兴趣，现在我的梦想是成为一名真正的宇航员！"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👧</div>
+                        <div>
+                            <div class="testimonial-name">林晓宇</div>
+                            <div class="testimonial-role">15岁，上海</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"界面设计超级酷炫，阅读体验很棒。我还会和同学们一起在社区讨论剧情发展。"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👦</div>
+                        <div>
+                            <div class="testimonial-name">王浩然</div>
+                            <div class="testimonial-role">13岁，广州</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content">
+            <h2>开启你的阅读冒险</h2>
+            <p>订阅我们的周刊，获取最新故事推荐、独家内容和特别优惠。加入数万名年轻读者的行列！</p>
+            <form class="cta-form" onsubmit="handleSubmit(event)">
+                <input type="email" class="cta-input" placeholder="输入你的邮箱地址" required>
+                <button type="submit" class="hero-button primary">立即订阅</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>关于我们</h3>
+                <ul>
+                    <li><a href="#">品牌故事</a></li>
+                    <li><a href="#">团队成员</a></li>
+                    <li><a href="#">招贤纳士</a></li>
+                    <li><a href="#">媒体报道</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>探索</h3>
+                <ul>
+                    <li><a href="#">图书分类</a></li>
+                    <li><a href="#">新书推荐</a></li>
+                    <li><a href="#">排行榜</a></li>
+                    <li><a href="#">作者专栏</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>帮助</h3>
+                <ul>
+                    <li><a href="#">常见问题</a></li>
+                    <li><a href="#">联系客服</a></li>
+                    <li><a href="#">使用指南</a></li>
+                    <li><a href="#">家长监护</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>关注我们</h3>
+                <ul>
+                    <li><a href="#">微信公众号</a></li>
+                    <li><a href="#">新浪微博</a></li>
+                    <li><a href="#">哔哩哔哩</a></li>
+                    <li><a href="#">抖音</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 故事星球. 保留所有权利. | 隐私政策 | 服务条款</p>
+        </div>
+    </footer>
+
+    <script>
+        // Create animated stars
+        function createStars() {
+            const bgAnimation = document.getElementById('bgAnimation');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                bgAnimation.appendChild(star);
+            }
+
+            // Create nebulas
+            const nebula1 = document.createElement('div');
+            nebula1.className = 'nebula nebula-1';
+            bgAnimation.appendChild(nebula1);
+
+            const nebula2 = document.createElement('div');
+            nebula2.className = 'nebula nebula-2';
+            bgAnimation.appendChild(nebula2);
+
+            const nebula3 = document.createElement('div');
+            nebula3.className = 'nebula nebula-3';
+            bgAnimation.appendChild(nebula3);
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Form submission
+        function handleSubmit(e) {
+            e.preventDefault();
+            const input = e.target.querySelector('input');
+            const email = input.value;
+
+            // Show success message
+            const button = e.target.querySelector('button');
+            button.textContent = '订阅成功！';
+            button.style.background = 'linear-gradient(135deg, #6BCB77 0%, #4D96FF 100%)';
+
+            setTimeout(() => {
+                button.textContent = '立即订阅';
+                button.style.background = '';
+                input.value = '';
+            }, 3000);
+        }
+
+        // Initialize
+        createStars();
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
