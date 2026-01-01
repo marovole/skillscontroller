@@ -1,0 +1,95 @@
+---
+---
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-content animate-fade-in">
+      <h1 class="hero-title">
+        让每一次 AI 对话<br/>
+        都拥有专家级能力
+      </h1>
+      <p class="hero-description">
+        Skills Controller 是智能技能编排控制器，根据上下文动态激活最相关的 Claude Code 技能，
+        让你零配置即可获得超强 AI 能力。
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">60+</span>
+          <span class="stat-label">技能</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">8</span>
+          <span class="stat-label">分类</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">0</span>
+          <span class="stat-label">配置</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: var(--spacing-2xl) var(--spacing-md);
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text);
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto var(--spacing-lg);
+    line-height: 1.7;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    margin-top: var(--spacing-xs);
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: var(--spacing-xl) var(--spacing-sm);
+    }
+
+    .hero-stats {
+      gap: var(--spacing-md);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+    }
+  }
+</style>

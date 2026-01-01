@@ -1,0 +1,476 @@
+import { categories, type Category } from './categories';
+
+export interface Skill {
+  id: string;
+  name: string;
+  description: string;
+  category: Category;
+  source: 'anthropic' | 'claudekit' | 'community' | 'composio' | 'voltagent';
+  triggers: string[];
+  priority: number;
+  content: string;
+}
+
+export const skills: Skill[] = [
+  // Frontend Skills
+  {
+    id: 'frontend-design',
+    name: 'Frontend Design',
+    description: '创建生产级前端界面，遵循设计原则和最佳实践',
+    category: categories[0],
+    source: 'anthropic',
+    triggers: ['UI', '界面', '组件', '页面', 'CSS', '设计'],
+    priority: 6,
+    content: `---
+name: frontend-design
+description: |
+  创建独特、生产质量的前端界面。
+  专注于现代设计原则、可访问性和最佳实践。
+  适用于：React、Vue、Svelte 等框架。
+---
+
+# Frontend Design
+
+此技能专注于创建高质量的前端用户界面。
+
+## 使用场景
+
+- 设计和实现新的 UI 组件
+- 改进现有界面的视觉设计
+- 确保可访问性和响应式设计
+- 遵循现代设计系统原则
+
+## 触发词
+
+UI、界面、组件、页面、CSS、设计、布局、样式
+
+## 来源
+
+Anthropic 官方技能
+`
+  },
+  {
+    id: 'modern-frontend-design',
+    name: 'Modern Frontend Design',
+    description: '现代前端设计系统，包含设计模式和美学原则',
+    category: categories[0],
+    source: 'anthropic',
+    triggers: ['现代前端', '设计系统', '美学', '视觉'],
+    priority: 7,
+    content: `---
+name: modern-frontend-design
+description: |
+  现代前端设计系统专家。
+  深入理解设计模式、美学原则和用户体验。
+---
+
+# Modern Frontend Design
+
+专注于现代前端设计的技能包。
+
+## 核心能力
+
+- 设计系统架构
+- 视觉美学指导
+- 用户体验优化
+- 设计模式应用
+
+## 触发词
+
+现代前端、设计系统、美学、视觉、UX
+`
+  },
+  {
+    id: 'react-components',
+    name: 'React Components',
+    description: 'React 组件开发和状态管理最佳实践',
+    category: categories[0],
+    source: 'community',
+    triggers: ['React', '组件', 'useState', 'useEffect', 'Hooks'],
+    priority: 6,
+    content: `---
+name: react-components
+description: |
+  React 组件开发专家。
+  精通 Hooks、状态管理和组件设计模式。
+---
+
+# React Components
+
+React 组件开发和架构最佳实践。
+
+## 技能范围
+
+- 函数式组件和 Hooks
+- 状态管理（Context、Redux、Zustand）
+- 组件设计模式
+- 性能优化
+`
+  },
+
+  // Backend Skills
+  {
+    id: 'backend-development',
+    name: 'Backend Development',
+    description: '后端开发、API 设计、服务端架构',
+    category: categories[1],
+    source: 'claudekit',
+    triggers: ['后端', 'API', '服务端', '服务器', 'REST', 'GraphQL'],
+    priority: 6,
+    content: `---
+name: backend-development
+description: |
+  后端开发专家。
+  精通 API 设计、数据库架构和服务端开发。
+---
+
+# Backend Development
+
+全栈后端开发能力。
+
+## 核心领域
+
+- RESTful API 设计
+- GraphQL API
+- 数据库建模
+- 认证和授权
+- 微服务架构
+`
+  },
+  {
+    id: 'database-design',
+    name: 'Database Design',
+    description: '数据库设计、SQL 优化、数据建模',
+    category: categories[1],
+    source: 'claudekit',
+    triggers: ['数据库', 'SQL', 'PostgreSQL', 'MySQL', 'MongoDB'],
+    priority: 6,
+    content: `---
+name: database-design
+description: |
+  数据库设计和优化专家。
+  支持关系型和非关系型数据库。
+---
+
+# Database Design
+
+专业的数据库设计和优化技能。
+
+## 支持的数据库
+
+- PostgreSQL
+- MySQL
+- MongoDB
+- Redis
+- SQLite
+`
+  },
+
+  // Testing Skills
+  {
+    id: 'webapp-testing',
+    name: 'Web App Testing',
+    description: '使用 Playwright 进行 E2E 测试',
+    category: categories[2],
+    source: 'community',
+    triggers: ['E2E', '测试', 'playwright', '端到端', '自动化测试'],
+    priority: 6,
+    content: `---
+name: webapp-testing
+description: |
+  Web 应用测试专家。
+  使用 Playwright 进行端到端测试。
+---
+
+# Web App Testing
+
+基于 Playwright 的 E2E 测试解决方案。
+
+## 测试能力
+
+- 浏览器自动化测试
+- 跨浏览器测试
+- 移动端测试
+- 视觉回归测试
+- 性能测试
+`
+  },
+  {
+    id: 'code-review',
+    name: 'Code Review',
+    description: '代码审查、PR 评审、质量检查',
+    category: categories[2],
+    source: 'community',
+    triggers: ['审查', 'review', 'PR', '代码质量', 'Code Review'],
+    priority: 7,
+    content: `---
+name: code-review
+description: |
+  代码审查专家。
+  全面的 PR 评审和代码质量检查。
+---
+
+# Code Review
+
+专业的代码审查和质量管理。
+
+## 审查维度
+
+- 代码正确性
+- 性能考虑
+- 安全问题
+- 可维护性
+- 最佳实践
+`
+  },
+
+  // DevOps Skills
+  {
+    id: 'devops',
+    name: 'DevOps',
+    description: 'CI/CD、Docker、部署自动化',
+    category: categories[3],
+    source: 'claudekit',
+    triggers: ['DevOps', 'CI/CD', '部署', 'Docker', 'Kubernetes'],
+    priority: 6,
+    content: `---
+name: devops
+description: |
+  DevOps 自动化专家。
+  精通 CI/CD、容器化和云部署。
+---
+
+# DevOps
+
+现代化的 DevOps 实践和自动化。
+
+## 核心技能
+
+- Docker 容器化
+- Kubernetes 编排
+- GitHub Actions
+- CI/CD 管道
+- 云平台部署
+`
+  },
+  {
+    id: 'docker',
+    name: 'Docker',
+    description: 'Docker 容器化和容器编排',
+    category: categories[3],
+    source: 'community',
+    triggers: ['Docker', '容器', 'Dockerfile', 'docker-compose'],
+    priority: 6,
+    content: `---
+name: docker
+description: |
+  Docker 容器化专家。
+  优化镜像构建和容器配置。
+---
+
+# Docker
+
+专业的 Docker 容器化解决方案。
+
+## 技能范围
+
+- Dockerfile 优化
+- 多阶段构建
+- docker-compose 编排
+- 镜像优化和安全
+`
+  },
+
+  // Documentation Skills
+  {
+    id: 'document-skills',
+    name: 'Document Skills',
+    description: '文档生成、Markdown 处理',
+    category: categories[4],
+    source: 'community',
+    triggers: ['文档', 'Markdown', 'readme', '文档生成'],
+    priority: 5,
+    content: `---
+name: document-skills
+description: |
+  技术文档专家。
+  生成高质量的 README 和 API 文档。
+---
+
+# Document Skills
+
+专业的技术文档编写能力。
+
+## 文档类型
+
+- README 文档
+- API 文档
+- 用户指南
+- 开发者文档
+- 变更日志
+`
+  },
+  {
+    id: 'pdf',
+    name: 'PDF',
+    description: 'PDF 生成和处理',
+    category: categories[4],
+    source: 'anthropic',
+    triggers: ['PDF', 'pdf文件', '导出PDF'],
+    priority: 6,
+    content: `---
+name: pdf
+description: |
+  PDF 文档处理专家。
+  生成、转换和处理 PDF 文件。
+---
+
+# PDF
+
+PDF 文档处理解决方案。
+
+## 能力范围
+
+- PDF 生成
+- PDF 转换
+- 文档合并
+- PDF 解析
+`
+  },
+
+  // Media Skills
+  {
+    id: 'image-enhancer',
+    name: 'Image Enhancer',
+    description: '图片增强和处理',
+    category: categories[5],
+    source: 'community',
+    triggers: ['图片', '图像', '增强', 'Image'],
+    priority: 5,
+    content: `---
+name: image-enhancer
+description: |
+  图片处理和增强专家。
+  图像编辑、优化和格式转换。
+---
+
+# Image Enhancer
+
+专业的图片处理解决方案。
+
+## 功能特性
+
+- 图片裁剪和调整
+- 格式转换
+- 压缩优化
+- 滤镜应用
+`
+  },
+
+  // Thinking Skills
+  {
+    id: 'sequential-thinking',
+    name: 'Sequential Thinking',
+    description: '逐步推理和顺序思考',
+    category: categories[6],
+    source: 'claudekit',
+    triggers: ['顺序思考', '逐步推理', '逻辑推理'],
+    priority: 4,
+    content: `---
+name: sequential-thinking
+description: |
+  顺序思考专家。
+  通过逐步推理解决复杂问题。
+---
+
+# Sequential Thinking
+
+结构化的逐步推理方法。
+
+## 思考模式
+
+1. 问题分解
+2. 逐步分析
+3. 逻辑推理
+4. 结论验证
+`
+  },
+
+  // Tools Skills
+  {
+    id: 'mcp-builder',
+    name: 'MCP Builder',
+    description: 'MCP 服务器创建和开发',
+    category: categories[7],
+    source: 'community',
+    triggers: ['MCP', '服务器', '集成', 'Model Context Protocol'],
+    priority: 6,
+    content: `---
+name: mcp-builder
+description: |
+  MCP 服务器开发专家。
+  创建和调试 Model Context Protocol 服务器。
+---
+
+# MCP Builder
+
+MCP 服务器开发和集成。
+
+## 开发能力
+
+- MCP 服务器架构
+- 工具函数开发
+- 资源管理
+- Prompt 模板
+- 客户端集成
+`
+  },
+  {
+    id: 'browser-automation',
+    name: 'Browser Automation',
+    description: '浏览器自动化和网页抓取',
+    category: categories[7],
+    source: 'community',
+    triggers: ['浏览器', '自动化', '抓取', 'Puppeteer', 'Playwright'],
+    priority: 5,
+    content: `---
+name: browser-automation
+description: |
+  浏览器自动化专家。
+  使用 Puppeteer/Playwright 进行网页操作。
+---
+
+# Browser Automation
+
+浏览器自动化和网页交互。
+
+## 自动化能力
+
+- 网页导航
+- 元素交互
+- 数据抓取
+- 截图和 PDF
+- 表单填写
+`
+  }
+];
+
+// 按分类获取技能
+export function getSkillsByCategory(categoryId: string): Skill[] {
+  return skills.filter(skill => skill.category.id === categoryId);
+}
+
+// 根据 ID 获取技能
+export function getSkillById(id: string): Skill | undefined {
+  return skills.find(skill => skill.id === id);
+}
+
+// 搜索技能
+export function searchSkills(query: string): Skill[] {
+  const lowerQuery = query.toLowerCase();
+  return skills.filter(skill =>
+    skill.name.toLowerCase().includes(lowerQuery) ||
+    skill.description.toLowerCase().includes(lowerQuery) ||
+    skill.triggers.some(trigger => trigger.toLowerCase().includes(lowerQuery))
+  );
+}
