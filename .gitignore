@@ -3,3 +3,8 @@ node_modules/
 .DS_Store
 .env
 *.tgz
+
+# Skills directories (optional, for local project skills)
+anthropic-skills/
+claudekit-skills/
+awesome-claude-skills/
