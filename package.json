@@ -8,14 +8,14 @@
     "build:shared": "pnpm --filter shared build",
     "build:mcp": "pnpm build:shared && pnpm --filter mcp-server build",
     "build:website": "pnpm build:shared && pnpm --filter website build",
+    "pages:build": "cd packages/website && npm install && npm run build",
     "dev": "pnpm --filter './packages/**' --parallel dev",
     "dev:mcp": "pnpm --filter mcp-server dev",
     "dev:website": "pnpm --filter website dev",
     "test": "pnpm --filter mcp-server test",
     "test:watch": "pnpm --filter mcp-server test --watch",
     "typecheck": "pnpm --filter './packages/**' typecheck",
-    "clean": "pnpm --filter './packages/**' clean",
-    "preinstall": "npx only-allow pnpm"
+    "clean": "pnpm --filter './packages/**' clean"
   },
   "keywords": [
     "claude",

@@ -10,7 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@skillscontroller/shared": "workspace:*",
     "astro": "^5.16.6",
     "jszip": "^3.10.1"
   },
