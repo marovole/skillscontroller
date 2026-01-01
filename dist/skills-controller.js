@@ -9,6 +9,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { CallToolRequestSchema, ListToolsRequestSchema, } from "@modelcontextprotocol/sdk/types.js";
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "url";
 import { validateSkillsDirs, validatePath, validateFileForRead, validateEntryName, validateAnalyzeAndRouteArgs, validateSkillName, validateKeyword, sanitizePathForLog, createSafeErrorResponse, PathTraversalError, } from "./validation.js";
 // ============================================
 // 类型定义（必须在使用前声明）
@@ -39,11 +40,14 @@ var IntentType;
 // ============================================
 // 技能库目录（支持多个目录，用逗号分隔）
 // 优先级：用户本地 > Anthropic 官方 > ClaudeKit > 社区
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const packageRoot = path.resolve(__dirname, "..");
 const DEFAULT_SKILLS_DIRS = [
     path.join(process.env.HOME || "", ".claude", "skills"), // 用户本地技能（最高优先级）
-    path.join(process.cwd(), "anthropic-skills", "skills"),
-    path.join(process.cwd(), "claudekit-skills", ".claude", "skills"),
-    path.join(process.cwd(), "awesome-claude-skills"),
+    path.join(packageRoot, "anthropic-skills", "skills"),
+    path.join(packageRoot, "claudekit-skills", ".claude", "skills"),
+    path.join(packageRoot, "awesome-claude-skills"),
 ];
 // Validate and filter skills directories
 const rawSkillsDirs = process.env.SKILLS_DIR
@@ -656,12 +660,25 @@ const SKILL_CONFIGS = {
 // 全局状态
 // ============================================
 let SKILL_REGISTRY = [];
-const skillContentCache = new Map();
-const state = {
-    activeSkills: new Set(),
-    context: "",
-    lastAnalysis: new Date(),
-};
+const sessionStates = new Map();
+function getSessionId(request) {
+    const req = request;
+    const meta = req.params?._meta || req.params?.meta || req._meta;
+    return meta?.sessionId || meta?.clientId || "default";
+}
+function getSessionState(sessionId) {
+    const existing = sessionStates.get(sessionId);
+    if (existing)
+        return existing;
+    const created = {
+        activeSkills: new Set(),
+        context: "",
+        lastAnalysis: new Date(),
+        skillContentCache: new Map(),
+    };
+    sessionStates.set(sessionId, created);
+    return created;
+}
 // ============================================
 // 技能扫描和加载
 // ============================================
@@ -815,10 +832,10 @@ async function scanSkillsDirectory(baseDir, maxDepth = 2) {
 /**
  * 加载技能的完整内容
  */
-async function loadSkillContent(skillName) {
+async function loadSkillContent(skillName, state) {
     // 检查缓存
-    if (skillContentCache.has(skillName)) {
-        return skillContentCache.get(skillName);
+    if (state.skillContentCache.has(skillName)) {
+        return state.skillContentCache.get(skillName);
     }
     const skill = SKILL_REGISTRY.find(s => s.name === skillName);
     if (!skill) {
@@ -831,7 +848,7 @@ async function loadSkillContent(skillName) {
         const skillFile = path.basename(skill.path);
         const validatedPath = validateFileForRead(skillDir, skillFile);
         const content = fs.readFileSync(validatedPath, "utf-8");
-        skillContentCache.set(skillName, content);
+        state.skillContentCache.set(skillName, content);
         skill.loaded = true;
         return content;
     }
@@ -861,8 +878,8 @@ function detectIntents(userMessage) {
             }
         }
         if (matchCount > 0) {
-            // 置信度计算：匹配数量 * 权重 / 模式数量
-            const confidence = (matchCount * totalWeight) / pattern.patterns.length;
+            // 置信度计算：匹配权重和 / 模式数量
+            const confidence = totalWeight / pattern.patterns.length;
             results.push({ intent: pattern.intent, confidence });
         }
     }
@@ -893,7 +910,7 @@ function analyzeContext(userMessage) {
     if (primaryIntent === IntentType.TEST_WRITE_UNIT) {
         console.error(`[Skills Controller] 单元测试编写场景，使用通用编程能力`);
         return {
-            skills: [], // 不激活特定技能
+            matches: [], // 不激活特定技能
             primaryIntent,
         };
     }
@@ -901,7 +918,7 @@ function analyzeContext(userMessage) {
     if (primaryIntent === IntentType.TEST_WRITE_INTEGRATION) {
         console.error(`[Skills Controller] 集成测试编写场景，使用通用编程能力`);
         return {
-            skills: [], // 不激活特定技能
+            matches: [], // 不激活特定技能
             primaryIntent,
         };
     }
@@ -923,11 +940,8 @@ function analyzeContext(userMessage) {
             if (config.requiredIntents && config.requiredIntents.length > 0) {
                 const hasRequiredIntent = config.requiredIntents.some(ri => allIntents.includes(ri));
                 if (!hasRequiredIntent) {
-                    // 如果主意图是 UNKNOWN，允许通过（兼容旧行为）
-                    if (primaryIntent !== IntentType.UNKNOWN) {
-                        console.error(`[Skills Controller] ${skill.name} 缺少必需意图 (需要: ${config.requiredIntents.join("/")})`);
-                        continue;
-                    }
+                    console.error(`[Skills Controller] ${skill.name} 缺少必需意图 (需要: ${config.requiredIntents.join("/")})`);
+                    continue;
                 }
             }
             // 检查排除词
@@ -978,7 +992,7 @@ function analyzeContext(userMessage) {
         console.error(`[Skills Controller] 无匹配技能`);
     }
     return {
-        skills: matchedSkills.map(m => m.skill),
+        matches: matchedSkills,
         primaryIntent,
     };
 }
@@ -1103,14 +1117,16 @@ function createServer() {
     // 处理工具调用
     server.setRequestHandler(CallToolRequestSchema, async (request) => {
         const { name, arguments: args } = request.params;
+        const sessionId = getSessionId(request);
+        const state = getSessionState(sessionId);
         try {
             switch (name) {
                 case "analyze_and_route": {
                     // Validate input with Zod schema
                     const { user_message, max_skills } = validateAnalyzeAndRouteArgs(args);
                     // 使用增强的意图感知分析
-                    const { skills: matchedSkills, primaryIntent } = analyzeContext(user_message);
-                    const skillsToActivate = matchedSkills.slice(0, max_skills);
+                    const { matches, primaryIntent } = analyzeContext(user_message);
+                    const skillsToActivate = matches.slice(0, max_skills);
                     if (skillsToActivate.length === 0) {
                         return {
                             content: [
@@ -1129,10 +1145,10 @@ function createServer() {
                     }
                     // 加载技能内容
                     const activatedContents = [];
-                    for (const skill of skillsToActivate) {
-                        const content = await loadSkillContent(skill.name);
-                        activatedContents.push({ name: skill.name, content });
-                        state.activeSkills.add(skill.name);
+                    for (const match of skillsToActivate) {
+                        const content = await loadSkillContent(match.skill.name, state);
+                        activatedContents.push({ name: match.skill.name, content });
+                        state.activeSkills.add(match.skill.name);
                     }
                     state.context = user_message;
                     state.lastAnalysis = new Date();
@@ -1143,13 +1159,13 @@ function createServer() {
                                 text: JSON.stringify({
                                     status: "activated",
                                     detected_intent: primaryIntent,
-                                    activated_skills: skillsToActivate.map(s => ({
-                                        name: s.name,
-                                        category: s.category,
-                                        match_reason: s.triggers.filter(t => user_message.toLowerCase().includes(t.toLowerCase())),
+                                    activated_skills: skillsToActivate.map(match => ({
+                                        name: match.skill.name,
+                                        category: match.skill.category,
+                                        match_reason: match.matchedTriggers,
                                     })),
                                     skill_contents: activatedContents,
-                                    instructions: `✅ **已激活技能**：${skillsToActivate.map(s => `${s.name}（${s.category}）`).join("、")}
+                                    instructions: `✅ **已激活技能**：${skillsToActivate.map(m => `${m.skill.name}（${m.skill.category}）`).join("、")}
 
 请根据以上激活的技能内容来处理用户请求。任务完成后，请务必调用 deactivate_all_skills 工具来停用技能并释放上下文空间。`,
                                 }),
@@ -1176,7 +1192,7 @@ function createServer() {
                     const skill_name = validateSkillName(args);
                     if (state.activeSkills.has(skill_name)) {
                         state.activeSkills.delete(skill_name);
-                        skillContentCache.delete(skill_name);
+                        state.skillContentCache.delete(skill_name);
                         return {
                             content: [
                                 {
@@ -1207,7 +1223,7 @@ function createServer() {
                     const deactivatedSkills = Array.from(state.activeSkills);
                     const count = deactivatedSkills.length;
                     state.activeSkills.clear();
-                    skillContentCache.clear();
+                    state.skillContentCache.clear();
                     // 生成友好的提示信息
                     const skillNames = deactivatedSkills.length > 0
                         ? deactivatedSkills.join("、")
@@ -1276,7 +1292,7 @@ function createServer() {
                             ],
                         };
                     }
-                    const content = await loadSkillContent(skill_name);
+                    const content = await loadSkillContent(skill_name, state);
                     state.activeSkills.add(skill_name);
                     return {
                         content: [
