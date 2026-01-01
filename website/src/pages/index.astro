@@ -6,8 +6,6 @@ import CategoryFilter from '../components/CategoryFilter.astro';
 import SkillGrid from '../components/SkillGrid.astro';
 import { skills } from '../data/skills';
 import { categories } from '../data/categories';
-import { downloadSingleSkill } from '../utils/downloader';
-import { downloadSkillPack, filterSkillsForPack, skillPacks } from '../utils/packager';
 ---
 
 <Layout title="Skills Controller - 智能技能编排控制器">
@@ -258,6 +256,44 @@ import { downloadSkillPack, filterSkillsForPack, skillPacks } from '../utils/pac
 </style>
 
 <script define:vars={{ skills }}>
+  // 下载单个技能
+  function downloadSingleSkill(skill) {
+    const blob = new Blob([skill.content], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${skill.id}-SKILL.md`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // 下载技能包（使用 JSZip）
+  async function downloadSkillPack(skills, packName) {
+    const zip = new JSZip();
+
+    // 添加技能文件
+    skills.forEach(skill => {
+      zip.file(`${skill.id}/SKILL.md`, skill.content);
+    });
+
+    // 生成 README
+    const readme = `# ${packName}\n\n本技能包包含 ${skills.length} 个技能，由 Skills Controller 提供。\n\n## 包含的技能\n\n${skills.map(s => `- **${s.name}** (\`${s.id}\`)`).join('\n')}\n\n## 安装方法\n\n1. 解压本文件\n2. 将技能目录复制到 ~/.claude/skills/ 目录\n3. 重启 Claude Code\n\n## 技能来源\n\nSkills Controller - https://github.com/marovole/skillscontroller\n`;
+    zip.file('README.md', readme);
+
+    // 生成并下载 ZIP
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(content);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${packName}-skills-pack.zip`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
   // 分类过滤功能
   let selectedCategory: string | null = null;
 
@@ -301,8 +337,6 @@ import { downloadSkillPack, filterSkillsForPack, skillPacks } from '../utils/pac
       const skill = skillsData.find(s => s.id === skillId);
 
       if (skill) {
-        // 动态导入下载函数
-        const { downloadSingleSkill } = await import('../utils/downloader');
         downloadSingleSkill(skill);
 
         // 更新按钮状态
@@ -431,7 +465,6 @@ import { downloadSkillPack, filterSkillsForPack, skillPacks } from '../utils/pac
 
           // 下载技能包
           const packName = button.querySelector('.pack-name')?.textContent || 'skills';
-          const { downloadSkillPack } = await import('../utils/packager');
 
           await downloadSkillPack(
             filteredSkills.map(s => ({
