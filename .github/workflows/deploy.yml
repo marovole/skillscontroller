@@ -18,7 +18,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          sparse-checkout: website
+          sparse-checkout-cone-mode: false
           fetch-depth: 0
 
       - name: Setup Node
