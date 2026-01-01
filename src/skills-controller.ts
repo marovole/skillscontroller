@@ -13,6 +13,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import * as fs from "fs";
 import * as path from "path";
+import { fileURLToPath } from "url";
 import {
   validateSkillsDirs,
   validatePath,
@@ -88,6 +89,7 @@ interface ControllerState {
   activeSkills: Set<string>;
   context: string;
   lastAnalysis: Date;
+  skillContentCache: Map<string, string>;
 }
 
 // ============================================
@@ -96,11 +98,15 @@ interface ControllerState {
 
 // 技能库目录（支持多个目录，用逗号分隔）
 // 优先级：用户本地 > Anthropic 官方 > ClaudeKit > 社区
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const packageRoot = path.resolve(__dirname, "..");
+
 const DEFAULT_SKILLS_DIRS = [
   path.join(process.env.HOME || "", ".claude", "skills"),  // 用户本地技能（最高优先级）
-  path.join(process.cwd(), "anthropic-skills", "skills"),
-  path.join(process.cwd(), "claudekit-skills", ".claude", "skills"),
-  path.join(process.cwd(), "awesome-claude-skills"),
+  path.join(packageRoot, "anthropic-skills", "skills"),
+  path.join(packageRoot, "claudekit-skills", ".claude", "skills"),
+  path.join(packageRoot, "awesome-claude-skills"),
 ];
 
 // Validate and filter skills directories
@@ -979,12 +985,30 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
 // ============================================
 
 let SKILL_REGISTRY: SkillMeta[] = [];
-const skillContentCache: Map<string, string> = new Map();
-const state: ControllerState = {
-  activeSkills: new Set(),
-  context: "",
-  lastAnalysis: new Date(),
-};
+const sessionStates: Map<string, ControllerState> = new Map();
+
+function getSessionId(request: unknown): string {
+  const req = request as {
+    params?: { _meta?: { sessionId?: string; clientId?: string }; meta?: { sessionId?: string; clientId?: string } };
+    _meta?: { sessionId?: string; clientId?: string };
+  };
+  const meta = req.params?._meta || req.params?.meta || req._meta;
+  return meta?.sessionId || meta?.clientId || "default";
+}
+
+function getSessionState(sessionId: string): ControllerState {
+  const existing = sessionStates.get(sessionId);
+  if (existing) return existing;
+
+  const created: ControllerState = {
+    activeSkills: new Set(),
+    context: "",
+    lastAnalysis: new Date(),
+    skillContentCache: new Map(),
+  };
+  sessionStates.set(sessionId, created);
+  return created;
+}
 
 // ============================================
 // 技能扫描和加载
@@ -1161,10 +1185,10 @@ async function scanSkillsDirectory(baseDir: string, maxDepth: number = 2): Promi
 /**
  * 加载技能的完整内容
  */
-async function loadSkillContent(skillName: string): Promise<string> {
+async function loadSkillContent(skillName: string, state: ControllerState): Promise<string> {
   // 检查缓存
-  if (skillContentCache.has(skillName)) {
-    return skillContentCache.get(skillName)!;
+  if (state.skillContentCache.has(skillName)) {
+    return state.skillContentCache.get(skillName)!;
   }
 
   const skill = SKILL_REGISTRY.find(s => s.name === skillName);
@@ -1180,7 +1204,7 @@ async function loadSkillContent(skillName: string): Promise<string> {
     const validatedPath = validateFileForRead(skillDir, skillFile);
 
     const content = fs.readFileSync(validatedPath, "utf-8");
-    skillContentCache.set(skillName, content);
+    state.skillContentCache.set(skillName, content);
     skill.loaded = true;
     return content;
   } catch (error) {
@@ -1214,8 +1238,8 @@ function detectIntents(userMessage: string): { intent: IntentType; confidence: n
     }
 
     if (matchCount > 0) {
-      // 置信度计算：匹配数量 * 权重 / 模式数量
-      const confidence = (matchCount * totalWeight) / pattern.patterns.length;
+      // 置信度计算：匹配权重和 / 模式数量
+      const confidence = totalWeight / pattern.patterns.length;
       results.push({ intent: pattern.intent, confidence });
     }
   }
@@ -1242,7 +1266,11 @@ function containsExcludeWords(message: string, excludes: string[]): boolean {
 /**
  * 增强版上下文分析 - 支持意图识别和排除机制（多语言）
  */
-function analyzeContext(userMessage: string): { skills: SkillMeta[]; primaryIntent: IntentType; locale: "en" | "zh" } {
+function analyzeContext(userMessage: string): {
+  matches: { skill: SkillMeta; score: number; matchedTriggers: string[] }[];
+  primaryIntent: IntentType;
+  locale: "en" | "zh";
+} {
   const messageLower = userMessage.toLowerCase();
 
   // Detect language of user message
@@ -1258,7 +1286,7 @@ function analyzeContext(userMessage: string): { skills: SkillMeta[]; primaryInte
   if (primaryIntent === IntentType.TEST_WRITE_UNIT) {
     console.error(`[Skills Controller] Unit test writing scenario, using general programming capabilities`);
     return {
-      skills: [],
+      matches: [],
       primaryIntent,
       locale,
     };
@@ -1268,7 +1296,7 @@ function analyzeContext(userMessage: string): { skills: SkillMeta[]; primaryInte
   if (primaryIntent === IntentType.TEST_WRITE_INTEGRATION) {
     console.error(`[Skills Controller] Integration test writing scenario, using general programming capabilities`);
     return {
-      skills: [],
+      matches: [],
       primaryIntent,
       locale,
     };
@@ -1297,11 +1325,8 @@ function analyzeContext(userMessage: string): { skills: SkillMeta[]; primaryInte
       if (config.requiredIntents && config.requiredIntents.length > 0) {
         const hasRequiredIntent = config.requiredIntents.some(ri => allIntents.includes(ri));
         if (!hasRequiredIntent) {
-          // 如果主意图是 UNKNOWN，允许通过（兼容旧行为）
-          if (primaryIntent !== IntentType.UNKNOWN) {
-            console.error(`[Skills Controller] ${skill.name} missing required intent (needs: ${config.requiredIntents.join("/")})`);
-            continue;
-          }
+          console.error(`[Skills Controller] ${skill.name} 缺少必需意图 (需要: ${config.requiredIntents.join("/")})`);
+          continue;
         }
       }
 
@@ -1360,7 +1385,7 @@ function analyzeContext(userMessage: string): { skills: SkillMeta[]; primaryInte
   }
 
   return {
-    skills: matchedSkills.map(m => m.skill),
+    matches: matchedSkills,
     primaryIntent,
     locale,
   };
@@ -1494,6 +1519,8 @@ Use this tool to let Claude automatically gain expert-level capabilities without
   // 处理工具调用
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
+    const sessionId = getSessionId(request);
+    const state = getSessionState(sessionId);
 
     try {
       switch (name) {
@@ -1501,77 +1528,75 @@ Use this tool to let Claude automatically gain expert-level capabilities without
           // Validate input with Zod schema
           const { user_message, max_skills } = validateAnalyzeAndRouteArgs(args);
 
-        // 使用增强的意图感知分析（多语言）
-        const { skills: matchedSkills, primaryIntent, locale } = analyzeContext(user_message);
-        const skillsToActivate = matchedSkills.slice(0, max_skills);
+          // 使用增强的意图感知分析（多语言）
+          const { matches, primaryIntent, locale } = analyzeContext(user_message);
+          const skillsToActivate = matches.slice(0, max_skills);
 
-        if (skillsToActivate.length === 0) {
-          const noMatchMsg = locale === "zh"
-            ? "未匹配到相关技能，使用通用模式处理"
-            : "No matching skills found, using general mode";
-          const suggestionMsg = locale === "zh"
-            ? "可以使用 search_skills 或 get_skill_index 查看可用技能"
-            : "Use search_skills or get_skill_index to see available skills";
+          if (skillsToActivate.length === 0) {
+            const noMatchMsg = locale === "zh"
+              ? "未匹配到相关技能，使用通用模式处理"
+              : "No matching skills found, using general mode";
+            const suggestionMsg = locale === "zh"
+              ? "可以使用 search_skills 或 get_skill_index 查看可用技能"
+              : "Use search_skills or get_skill_index to see available skills";
+
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify({
+                    status: "no_match",
+                    detected_intent: primaryIntent,
+                    locale: locale,
+                    message: noMatchMsg,
+                    suggestion: suggestionMsg,
+                    total_skills: SKILL_REGISTRY.length,
+                  }),
+                },
+              ],
+            };
+          }
+
+          // 加载技能内容
+          const activatedContents: { name: string; content: string }[] = [];
+
+          for (const match of skillsToActivate) {
+            const content = await loadSkillContent(match.skill.name, state);
+            activatedContents.push({ name: match.skill.name, content });
+            state.activeSkills.add(match.skill.name);
+          }
+
+          state.context = user_message;
+          state.lastAnalysis = new Date();
+
+          // Generate localized instructions
+          const activatedMsg = locale === "zh"
+            ? `✅ **已激活技能**：${skillsToActivate.map(match => `${match.skill.name}（${match.skill.category}）`).join("、")}`
+            : `✅ **Activated skills**: ${skillsToActivate.map(match => `${match.skill.name} (${match.skill.category})`).join(", ")}`;
+          const processMsg = locale === "zh"
+            ? "请根据以上激活的技能内容来处理用户请求。任务完成后，请务必调用 deactivate_all_skills 工具来停用技能并释放上下文空间。"
+            : "Please process the user's request based on the activated skill content above. After completing the task, be sure to call deactivate_all_skills to release context space.";
+          const instructions = `${activatedMsg}\n\n${processMsg}`;
 
           return {
             content: [
               {
                 type: "text",
                 text: JSON.stringify({
-                  status: "no_match",
+                  status: "activated",
                   detected_intent: primaryIntent,
                   locale: locale,
-                  message: noMatchMsg,
-                  suggestion: suggestionMsg,
-                  total_skills: SKILL_REGISTRY.length,
+                  activated_skills: skillsToActivate.map(match => ({
+                    name: match.skill.name,
+                    category: match.skill.category,
+                    match_reason: match.matchedTriggers,
+                  })),
+                  skill_contents: activatedContents,
+                  instructions: instructions,
                 }),
               },
             ],
           };
-        }
-
-        // 加载技能内容
-        const activatedContents: { name: string; content: string }[] = [];
-
-        for (const skill of skillsToActivate) {
-          const content = await loadSkillContent(skill.name);
-          activatedContents.push({ name: skill.name, content });
-          state.activeSkills.add(skill.name);
-        }
-
-        state.context = user_message;
-        state.lastAnalysis = new Date();
-
-        // Generate localized instructions
-        const activatedMsg = locale === "zh"
-          ? `✅ **已激活技能**：${skillsToActivate.map(s => `${s.name}（${s.category}）`).join("、")}`
-          : `✅ **Activated skills**: ${skillsToActivate.map(s => `${s.name} (${s.category})`).join(", ")}`;
-        const processMsg = locale === "zh"
-          ? "请根据以上激活的技能内容来处理用户请求。任务完成后，请务必调用 deactivate_all_skills 工具来停用技能并释放上下文空间。"
-          : "Please process the user's request based on the activated skill content above. After completing the task, be sure to call deactivate_all_skills to release context space.";
-        const instructions = `${activatedMsg}\n\n${processMsg}`;
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                status: "activated",
-                detected_intent: primaryIntent,
-                locale: locale,
-                activated_skills: skillsToActivate.map(s => ({
-                  name: s.name,
-                  category: s.category,
-                  match_reason: s.triggers.filter(t =>
-                    user_message.toLowerCase().includes(t.toLowerCase())
-                  ),
-                })),
-                skill_contents: activatedContents,
-                instructions: instructions,
-              }),
-            },
-          ],
-        };
       }
 
       case "list_active_skills": {
@@ -1595,7 +1620,7 @@ Use this tool to let Claude automatically gain expert-level capabilities without
 
         if (state.activeSkills.has(skill_name)) {
           state.activeSkills.delete(skill_name);
-          skillContentCache.delete(skill_name);
+          state.skillContentCache.delete(skill_name);
 
           return {
             content: [
@@ -1630,7 +1655,7 @@ Use this tool to let Claude automatically gain expert-level capabilities without
         const count = deactivatedSkills.length;
 
         state.activeSkills.clear();
-        skillContentCache.clear();
+        state.skillContentCache.clear();
 
         // 生成友好的提示信息
         const skillNames = deactivatedSkills.length > 0
@@ -1706,7 +1731,7 @@ Use this tool to let Claude automatically gain expert-level capabilities without
           };
         }
 
-        const content = await loadSkillContent(skill_name);
+        const content = await loadSkillContent(skill_name, state);
         state.activeSkills.add(skill_name);
 
         return {
