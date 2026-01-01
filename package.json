@@ -25,7 +25,11 @@
     "prepublishOnly": "npm run build",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:report": "tsx test/coverage/generate-reports.ts",
+    "test:report:matrix": "tsx test/coverage/generate-reports.ts",
+    "test:report:intent": "tsx test/coverage/generate-reports.ts"
   },
   "keywords": [
     "claude",
