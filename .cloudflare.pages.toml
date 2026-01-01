@@ -1,0 +1,12 @@
+# Cloudflare Pages 构建设置
+# 这些设置需要在 Cloudflare Dashboard 中配置：
+# - Build command: cd website && npm install && npm run build
+# - Build output directory: website/dist
+# - Root directory: /
+# - Environment variables: NODE_VERSION = 18
+
+# 备选：如果 Cloudflare 支持通过文件配置
+[build]
+command = "cd website && npm install && npm run build"
+destination = "website/dist"
+cwd = "/"
