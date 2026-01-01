@@ -49,6 +49,7 @@ const DEFAULT_SKILLS_DIRS = [
     path.join(packageRoot, "anthropic-skills", "skills"),
     path.join(packageRoot, "claudekit-skills", ".claude", "skills"),
     path.join(packageRoot, "awesome-claude-skills"),
+    path.join(packageRoot, "scientific-skills", "scientific-skills"), // K-Dense 科学技能
 ];
 // Validate and filter skills directories
 const rawSkillsDirs = process.env.SKILLS_DIR
@@ -316,6 +317,140 @@ const EXTRA_TRIGGERS = {
     "competitive-ads-extractor": {
         zh: ["广告", "竞品"],
         en: ["ads", "advertisement", "competitor"],
+    },
+    // === K-Dense 科学技能触发词 ===
+    // -- 生物信息学 --
+    "biopython": {
+        zh: ["生物Python", "序列分析", "基因序列", "DNA分析", "RNA分析", "蛋白质序列", "FASTA", "GenBank"],
+        en: ["biopython", "sequence analysis", "gene sequence", "dna analysis", "rna analysis", "protein sequence", "fasta", "genbank"],
+    },
+    "scanpy": {
+        zh: ["单细胞", "单细胞RNA测序", "scRNA-seq", "细胞聚类", "细胞类型"],
+        en: ["single cell", "single-cell rna-seq", "scrna-seq", "cell clustering", "cell type", "10x genomics", "scanpy"],
+    },
+    "pysam": {
+        zh: ["BAM文件", "SAM文件", "基因组比对", "变异检测", "VCF"],
+        en: ["bam file", "sam file", "genome alignment", "variant calling", "vcf", "pysam"],
+    },
+    "scvi-tools": {
+        zh: ["单细胞变分推断", "scVI", "scANVI"],
+        en: ["scvi", "scanvi", "single cell variational inference"],
+    },
+    "anndata": {
+        zh: ["AnnData", "单细胞数据结构"],
+        en: ["anndata", "annotated data matrix"],
+    },
+    // -- 化学信息学 --
+    "rdkit": {
+        zh: ["分子操作", "化学信息学", "SMILES", "分子指纹", "化学结构", "分子描述符"],
+        en: ["molecular manipulation", "cheminformatics", "smiles", "molecular fingerprint", "chemical structure", "molecular descriptor", "rdkit"],
+    },
+    "datamol": {
+        zh: ["分子生成", "分子优化", "化学AI"],
+        en: ["molecular generation", "molecule optimization", "chemistry ai", "datamol"],
+    },
+    "diffdock": {
+        zh: ["分子对接", "虚拟筛选", "配体结合"],
+        en: ["molecular docking", "virtual screening", "ligand binding", "diffdock"],
+    },
+    "deepchem": {
+        zh: ["化学深度学习", "ADMET预测", "药物发现AI"],
+        en: ["chemistry deep learning", "admet prediction", "drug discovery ai", "deepchem"],
+    },
+    "molfeat": {
+        zh: ["分子特征", "化学编码"],
+        en: ["molecular features", "chemical encoding", "molfeat"],
+    },
+    // -- 临床研究 --
+    "clinicaltrials-database": {
+        zh: ["临床试验", "药物试验", "临床研究"],
+        en: ["clinical trial", "drug trial", "clinical research", "clinicaltrials.gov"],
+    },
+    "cosmic-database": {
+        zh: ["癌症突变", "体细胞突变", "肿瘤基因组", "COSMIC"],
+        en: ["cancer mutation", "somatic mutation", "tumor genome", "cosmic"],
+    },
+    "clinpgx-database": {
+        zh: ["药物基因组学", "个体化用药"],
+        en: ["pharmacogenomics", "personalized medicine", "clinpgx"],
+    },
+    // -- 机器学习 --
+    "pytorch-lightning": {
+        zh: ["PyTorch Lightning", "深度学习训练"],
+        en: ["pytorch lightning", "deep learning training"],
+    },
+    "scikit-learn": {
+        zh: ["机器学习", "分类", "回归", "聚类", "sklearn"],
+        en: ["machine learning", "classification", "regression", "clustering", "sklearn", "scikit-learn"],
+    },
+    "pymc": {
+        zh: ["贝叶斯", "概率编程", "MCMC"],
+        en: ["bayesian", "probabilistic programming", "mcmc", "pymc"],
+    },
+    "shap": {
+        zh: ["模型解释", "特征重要性", "SHAP值"],
+        en: ["model interpretation", "feature importance", "shap", "shapley"],
+    },
+    // -- 蛋白质组学 --
+    "pyopenms": {
+        zh: ["质谱分析", "蛋白质组学", "LC-MS"],
+        en: ["mass spectrometry", "proteomics", "lc-ms", "pyopenms"],
+    },
+    "matchms": {
+        zh: ["光谱匹配", "代谢组学"],
+        en: ["spectral matching", "metabolomics", "matchms"],
+    },
+    // -- 科学数据库 --
+    "uniprot-database": {
+        zh: ["蛋白质数据库", "UniProt", "蛋白质功能"],
+        en: ["protein database", "uniprot", "protein function"],
+    },
+    "pubmed-database": {
+        zh: ["文献检索", "PubMed", "医学文献"],
+        en: ["literature search", "pubmed", "medical literature"],
+    },
+    "chembl-database": {
+        zh: ["药物数据库", "ChEMBL", "生物活性"],
+        en: ["drug database", "chembl", "bioactivity"],
+    },
+    "pubchem-database": {
+        zh: ["化学数据库", "PubChem", "化合物"],
+        en: ["chemical database", "pubchem", "compound"],
+    },
+    "openalex-database": {
+        zh: ["学术搜索", "文献分析", "OpenAlex"],
+        en: ["academic search", "literature analysis", "opentalex", "openalex"],
+    },
+    "biorxiv-database": {
+        zh: ["预印本", "生物学预印本", "bioRxiv"],
+        en: ["preprint", "biology preprint", "biorxiv"],
+    },
+    // -- 物理与量子计算 --
+    "qiskit": {
+        zh: ["量子计算", "IBM量子", "量子电路"],
+        en: ["quantum computing", "ibm quantum", "quantum circuit", "qiskit"],
+    },
+    "cirq": {
+        zh: ["量子电路", "Cirq", "量子算法"],
+        en: ["quantum circuit", "cirq", "quantum algorithm"],
+    },
+    "pennylane": {
+        zh: ["量子机器学习", "变分量子"],
+        en: ["quantum machine learning", "variational quantum", "pennylane"],
+    },
+    "astropy": {
+        zh: ["天文学", "天文数据", "望远镜"],
+        en: ["astronomy", "astronomical data", "telescope", "astropy"],
+    },
+    // -- 材料科学 --
+    "pymatgen": {
+        zh: ["材料科学", "晶体结构", "材料性质"],
+        en: ["materials science", "crystal structure", "material properties", "pymatgen"],
+    },
+    // -- 可视化 --
+    "scientific-visualization": {
+        zh: ["科学可视化", "发表级图表", "matplotlib", "seaborn"],
+        en: ["scientific visualization", "publication figures", "matplotlib", "seaborn"],
     },
 };
 // ============================================
@@ -895,6 +1030,261 @@ const SKILL_CONFIGS = {
     "claude-code": {
         priority: 4,
     },
+    // === K-Dense 科学技能配置 ===
+    // -- 生物信息学类：需要 CREATE/ANALYZE/RESEARCH 意图 --
+    "biopython": {
+        triggers: [
+            { word: "序列分析", weight: 6 },
+            { word: "DNA", weight: 5 },
+            { word: "RNA", weight: 5 },
+            { word: "FASTA", weight: 7 },
+            { word: "sequence analysis", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE, IntentType.RESEARCH],
+        priority: 7,
+    },
+    "scanpy": {
+        triggers: [
+            { word: "单细胞", weight: 7 },
+            { word: "scRNA-seq", weight: 8 },
+            { word: "single cell", weight: 7 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "pysam": {
+        triggers: [
+            { word: "BAM", weight: 6 },
+            { word: "VCF", weight: 6 },
+            { word: "变异检测", weight: 5 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 6,
+    },
+    "scvi-tools": {
+        triggers: [
+            { word: "scVI", weight: 7 },
+            { word: "变分推断", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 6,
+    },
+    "anndata": {
+        triggers: [
+            { word: "AnnData", weight: 7 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 5,
+    },
+    // -- 化学信息学类 --
+    "rdkit": {
+        triggers: [
+            { word: "分子", weight: 4 },
+            { word: "SMILES", weight: 7 },
+            { word: "化学结构", weight: 6 },
+            { word: "molecular", weight: 4 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "diffdock": {
+        triggers: [
+            { word: "分子对接", weight: 8 },
+            { word: "docking", weight: 7 },
+            { word: "虚拟筛选", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "deepchem": {
+        triggers: [
+            { word: "ADMET", weight: 8 },
+            { word: "药物发现", weight: 6 },
+            { word: "drug discovery", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "molfeat": {
+        triggers: [
+            { word: "分子特征", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 5,
+    },
+    "datamol": {
+        triggers: [
+            { word: "datamol", weight: 7 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 6,
+    },
+    // -- 临床研究类 --
+    "clinicaltrials-database": {
+        triggers: [
+            { word: "临床试验", weight: 8 },
+            { word: "clinical trial", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "cosmic-database": {
+        triggers: [
+            { word: "癌症突变", weight: 7 },
+            { word: "COSMIC", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "clinpgx-database": {
+        triggers: [
+            { word: "药物基因组", weight: 7 },
+        ],
+        requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 6,
+    },
+    // -- 机器学习类 --
+    "scikit-learn": {
+        triggers: [
+            { word: "机器学习", weight: 5 },
+            { word: "sklearn", weight: 7 },
+            { word: "分类器", weight: 5 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 6,
+    },
+    "pytorch-lightning": {
+        triggers: [
+            { word: "深度学习训练", weight: 6 },
+            { word: "lightning", weight: 7 },
+        ],
+        requiredIntents: [IntentType.CREATE],
+        priority: 6,
+    },
+    "pymc": {
+        triggers: [
+            { word: "贝叶斯", weight: 7 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 6,
+    },
+    "shap": {
+        triggers: [
+            { word: "模型解释", weight: 7 },
+            { word: "SHAP", weight: 8 },
+        ],
+        requiredIntents: [IntentType.ANALYZE],
+        priority: 6,
+    },
+    // -- 蛋白质组学类 --
+    "pyopenms": {
+        triggers: [
+            { word: "质谱", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 6,
+    },
+    "matchms": {
+        triggers: [
+            { word: "光谱匹配", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.ANALYZE],
+        priority: 5,
+    },
+    // -- 科学数据库类：主要是 RESEARCH 意图 --
+    "pubmed-database": {
+        triggers: [
+            { word: "文献检索", weight: 7 },
+            { word: "PubMed", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH],
+        priority: 7,
+    },
+    "uniprot-database": {
+        triggers: [
+            { word: "UniProt", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "chembl-database": {
+        triggers: [
+            { word: "ChEMBL", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "pubchem-database": {
+        triggers: [
+            { word: "PubChem", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 7,
+    },
+    "openalex-database": {
+        triggers: [
+            { word: "OpenAlex", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH],
+        priority: 7,
+    },
+    "biorxiv-database": {
+        triggers: [
+            { word: "bioRxiv", weight: 8 },
+        ],
+        requiredIntents: [IntentType.RESEARCH],
+        priority: 6,
+    },
+    // -- 量子计算类 --
+    "qiskit": {
+        triggers: [
+            { word: "量子计算", weight: 7 },
+            { word: "qiskit", weight: 8 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.RESEARCH],
+        priority: 6,
+    },
+    "cirq": {
+        triggers: [
+            { word: "cirq", weight: 8 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.RESEARCH],
+        priority: 6,
+    },
+    "pennylane": {
+        triggers: [
+            { word: "pennylane", weight: 8 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.RESEARCH],
+        priority: 6,
+    },
+    "astropy": {
+        triggers: [
+            { word: "天文学", weight: 7 },
+            { word: "astropy", weight: 8 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 6,
+    },
+    // -- 材料科学 --
+    "pymatgen": {
+        triggers: [
+            { word: "pymatgen", weight: 8 },
+            { word: "材料科学", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE, IntentType.RESEARCH, IntentType.ANALYZE],
+        priority: 6,
+    },
+    // -- 科学可视化 --
+    "scientific-visualization": {
+        triggers: [
+            { word: "matplotlib", weight: 7 },
+            { word: "seaborn", weight: 7 },
+            { word: "科学可视化", weight: 6 },
+        ],
+        requiredIntents: [IntentType.CREATE],
+        priority: 6,
+    },
 };
 // ============================================
 // 全局状态
@@ -944,6 +1334,32 @@ function parseFrontmatter(content) {
  */
 function inferCategory(name, description) {
     const text = `${name} ${description}`.toLowerCase();
+    // === 科学类别（优先匹配）===
+    if (text.match(/bioinformatics|genomics|gene|dna|rna|sequence|biopython|scanpy|生物信息|基因|序列/)) {
+        return "bioinformatics";
+    }
+    if (text.match(/chemistry|cheminformatics|rdkit|molecule|drug|chemical|smiles|化学|分子|药物/)) {
+        return "chemistry";
+    }
+    if (text.match(/clinical|medical|health|patient|diagnosis|临床|医学|医疗|诊断/)) {
+        return "clinical";
+    }
+    if (text.match(/machine learning|deep learning|pytorch|scikit|neural|ml|机器学习|深度学习/)) {
+        return "ml";
+    }
+    if (text.match(/quantum|physics|astro|量子|物理|天文/)) {
+        return "physics";
+    }
+    if (text.match(/protein|proteomics|mass spec|蛋白|质谱/)) {
+        return "proteomics";
+    }
+    if (text.match(/material|crystal|材料|晶体/)) {
+        return "materials";
+    }
+    if (text.match(/-database|pubmed|uniprot|chembl|数据库/)) {
+        return "scientific-db";
+    }
+    // === 原有类别 ===
     if (text.includes("frontend") || text.includes("ui") || text.includes("design") || text.includes("css")) {
         return "frontend";
     }

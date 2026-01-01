@@ -14,12 +14,14 @@
     "claudekit-skills",
     "composio-skills",
     "voltagent-skills",
+    "scientific-skills",
     "skills-controller",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
+    "build:website": "cd website && npm install && npm run build",
     "start": "node dist/skills-controller.js",
     "dev": "tsx src/skills-controller.ts",
     "prepublishOnly": "npm run build",

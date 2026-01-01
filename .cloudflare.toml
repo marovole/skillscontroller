@@ -1,0 +1,12 @@
+# Cloudflare Pages Configuration
+# This configures how Cloudflare Pages builds the website
+
+name = "skillscontroller"
+compatibility_date = "2024-01-01"
+
+# Pages build configuration
+pages_build_output_dir = "website/dist"
+
+[build]
+command = "cd website && npm install && npm run build"
+watch_paths = ["website/src/**"]
