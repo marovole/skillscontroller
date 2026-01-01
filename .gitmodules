@@ -1,3 +1,18 @@
+[submodule "anthropic-skills"]
+	path = anthropic-skills
+	url = https://github.com/anthropics/anthropic-quickstarts.git
+[submodule "claudekit-skills"]
+	path = claudekit-skills
+	url = https://github.com/jorgeboman/claudekit-skills.git
+[submodule "awesome-claude-skills"]
+	path = awesome-claude-skills
+	url = https://github.com/yutongyang/awesome-claude-skills.git
+[submodule "composio-skills"]
+	path = composio-skills
+	url = https://github.com/ComposioHQ/composio-skills.git
+[submodule "voltagent-skills"]
+	path = voltagent-skills
+	url = https://github.com/Voltagent/voltagent-skills.git
 [submodule "scientific-skills"]
 	path = scientific-skills
 	url = https://github.com/K-Dense-AI/claude-scientific-skills.git
