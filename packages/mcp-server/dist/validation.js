@@ -321,3 +321,4 @@ export function validateSkillBundle(data) {
     }
     return result.data;
 }
+//# sourceMappingURL=validation.js.map
