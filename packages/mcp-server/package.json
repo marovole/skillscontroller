@@ -1,0 +1,60 @@
+{
+  "name": "skillscontroller",
+  "version": "1.0.0",
+  "description": "智能技能编排控制器 - 根据上下文动态激活/停用 Claude Code 技能",
+  "type": "module",
+  "main": "./dist/skills-controller.js",
+  "bin": {
+    "skillscontroller": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/skills-controller.js",
+    "dev": "tsx src/skills-controller.ts",
+    "prepublishOnly": "npm run build",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "skills",
+    "mcp",
+    "ai-tools",
+    "model-context-protocol"
+  ],
+  "author": "marovole",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marovole/skillscontroller.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marovole/skillscontroller/issues"
+  },
+  "homepage": "https://github.com/marovole/skillscontroller#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@skillscontroller/shared": "workspace:*",
+    "yaml": "^2.8.2",
+    "zod": "^4.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitest/ui": "^4.0.16",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^4.0.16"
+  }
+}

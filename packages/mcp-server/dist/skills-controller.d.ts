@@ -5,3 +5,4 @@
  * 自动扫描并加载技能库中的所有技能
  */
 export {};
+//# sourceMappingURL=skills-controller.d.ts.map

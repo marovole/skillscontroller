@@ -1666,3 +1666,4 @@ async function main() {
     console.error("[Skills Controller] MCP Server started");
 }
 main().catch(console.error);
+//# sourceMappingURL=skills-controller.js.map

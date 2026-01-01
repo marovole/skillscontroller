@@ -126,3 +126,4 @@ export declare function validateBundleName(name: string): string;
  * Validates YAML skill bundle content
  */
 export declare function validateSkillBundle(data: unknown): z.infer<typeof SkillBundleSchema>;
+//# sourceMappingURL=validation.d.ts.map

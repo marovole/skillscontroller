@@ -296,3 +296,4 @@ export function formatMessage(key, params, locale) {
     }
     return template;
 }
+//# sourceMappingURL=i18n.js.map
