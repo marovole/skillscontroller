@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![MCP](https://img.shields.io/badge/MCP-1.0-purple)](https://modelcontextprotocol.io/)
-[![Skills](https://img.shields.io/badge/Skills-60+-green)](#技能来源)
+[![Skills](https://img.shields.io/badge/Skills-198+-green)](#技能来源)
 
 ---
 
@@ -18,6 +18,7 @@
 | [![Anthropic](https://github.githubassets.com/favicons/favicon.svg) Anthropic 官方](https://github.com/anthropics/anthropic-quickstarts) | [![30.7k](https://img.shields.io/badge/⭐-30.7k-blue)](https://github.com/anthropics/anthropic-quickstarts) | 16 | MIT |
 | [![ClaudeKit](https://github.githubassets.com/favicons/favicon.svg) ClaudeKit](https://github.com/jorgeboman/claudekit-skills) | [![1k](https://img.shields.io/badge/⭐-1k-blue)](https://github.com/jorgeboman/claudekit-skills) | 29 | MIT |
 | [![awesome-claude-skills](https://github.githubassets.com/favicons/favicon.svg) awesome-claude-skills](https://github.com/yutongyang/awesome-claude-skills) | [![3.9k](https://img.shields.io/badge/⭐-3.9k-blue)](https://github.com/yutongyang/awesome-claude-skills) | 15 | MIT |
+| [![K-Dense Scientific](https://github.githubassets.com/favicons/favicon.svg) K-Dense Scientific](https://github.com/K-Dense-AI/claude-scientific-skills) | [![2.5k](https://img.shields.io/badge/⭐-2.5k-blue)](https://github.com/K-Dense-AI/claude-scientific-skills) | 138 | MIT |
 
 ---
 
