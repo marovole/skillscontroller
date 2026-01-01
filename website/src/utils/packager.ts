@@ -1,0 +1,201 @@
+import JSZip from 'jszip';
+import type { Skill } from '../data/skills';
+
+export interface SkillForPackage {
+  id: string;
+  name: string;
+  content: string;
+}
+
+/**
+ * 下载技能包（ZIP 格式）
+ */
+export async function downloadSkillPack(
+  skills: SkillForPackage[],
+  packName: string
+): Promise<void> {
+  // 创建 ZIP 实例
+  const zip = new JSZip();
+
+  // 添加技能文件
+  skills.forEach(skill => {
+    // 创建目录结构: skill-id/SKILL.md
+    zip.file(`${skill.id}/SKILL.md`, skill.content);
+  });
+
+  // 生成 README
+  const readme = generatePackReadme(skills, packName);
+  zip.file('README.md', readme);
+
+  // 生成 ZIP 文件
+  const content = await zip.generateAsync({ type: 'blob' });
+
+  // 下载
+  const url = URL.createObjectURL(content);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${packName}-skills-pack.zip`;
+
+  document.body.appendChild(link);
+  link.click();
+
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * 生成技能包 README
+ */
+function generatePackReadme(
+  skills: SkillForPackage[],
+  packName: string
+): string {
+  return `# ${packName}
+
+本技能包包含 ${skills.length} 个技能，由 Skills Controller 提供。
+
+## 包含的技能
+
+${skills.map(s => `- **${s.name}** (\`${s.id}\`)`).join('\n')}
+
+## 安装方法
+
+### 方法一：手动安装
+
+1. 解压本文件
+2. 将技能目录复制到 \`~/.claude/skills/\` 目录
+3. 重启 Claude Code
+
+### 方法二：项目集成
+
+如果你想将这些技能集成到你的项目中：
+
+1. 解压本文件
+2. 将技能目录复制到项目的技能目录（如 \`./anthropic-skills/skills/\`）
+3. 确保 Skills Controller 配置了正确的技能路径
+
+## 技能来源
+
+Skills Controller - https://github.com/marovole/skillscontroller
+
+## 许可证
+
+MIT License
+`;
+}
+
+/**
+ * 预设技能包定义
+ */
+export const skillPacks = {
+  frontend: {
+    name: '前端开发技能包',
+    description: '包含 UI 设计、React 组件、样式系统等前端技能',
+    categoryIds: ['frontend']
+  },
+  backend: {
+    name: '后端开发技能包',
+    description: '包含 API 设计、数据库、服务端架构等后端技能',
+    categoryIds: ['backend']
+  },
+  testing: {
+    name: '测试质量技能包',
+    description: '包含 E2E 测试、代码审查、质量保障等测试技能',
+    categoryIds: ['testing']
+  },
+  devops: {
+    name: 'DevOps 技能包',
+    description: '包含 CI/CD、Docker、部署等 DevOps 技能',
+    categoryIds: ['devops']
+  },
+  fullstack: {
+    name: '全栈开发技能包',
+    description: '包含前端、后端、测试等全栈开发技能',
+    categoryIds: ['frontend', 'backend', 'testing']
+  },
+  all: {
+    name: '完整技能包',
+    description: '包含所有可用的技能',
+    categoryIds: [] // 空数组表示全部
+  }
+};
+
+/**
+ * 根据技能包过滤技能
+ */
+export function filterSkillsForPack(
+  allSkills: Skill[],
+  packKey: keyof typeof skillPacks
+): Skill[] {
+  const pack = skillPacks[packKey];
+
+  if (pack.categoryIds.length === 0) {
+    // 返回所有技能
+    return allSkills;
+  }
+
+  // 按分类过滤
+  return allSkills.filter(skill =>
+    pack.categoryIds.includes(skill.category.id)
+  );
+}
+
+/**
+ * 显示技能包下载选择器
+ */
+export function showPackDownloadModal(
+  allSkills: Skill[],
+  onDownload: (skills: Skill[], packName: string) => void
+): void {
+  // 创建模态框 HTML
+  const modalHtml = `
+    <div id="pack-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>下载技能包</h2>
+          <button class="modal-close" id="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">选择要下载的技能包：</p>
+          <div class="pack-list">
+            ${Object.entries(skillPacks).map(([key, pack]) => `
+              <button class="pack-button" data-pack="${key}">
+                <div class="pack-name">${pack.name}</div>
+                <div class="pack-description">${pack.description}</div>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 添加到页面
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  const modal = document.getElementById('pack-modal');
+  const closeBtn = document.getElementById('close-modal');
+
+  // 关闭模态框
+  const closeModal = () => {
+    modal?.remove();
+  };
+
+  closeBtn?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // 绑定下载按钮
+  document.querySelectorAll('.pack-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const packKey = button.dataset.pack as keyof typeof skillPacks;
+      if (packKey) {
+        const skills = filterSkillsForPack(allSkills, packKey);
+        const pack = skillPacks[packKey];
+        onDownload(skills, pack.name);
+        closeModal();
+      }
+    });
+  });
+}

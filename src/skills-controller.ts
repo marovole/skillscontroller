@@ -28,6 +28,7 @@ import {
   SymlinkEscapeError,
   SECURITY_LIMITS,
 } from "./validation.js";
+import { detectLanguage, t, formatMessage } from "./i18n.js";
 
 // ============================================
 // 类型定义（必须在使用前声明）
@@ -115,93 +116,286 @@ const rawSkillsDirs = process.env.SKILLS_DIR
 
 const SKILLS_DIRS: string[] = validateSkillsDirs(rawSkillsDirs);
 
-// 额外的触发词映射（用于增强匹配）
-const EXTRA_TRIGGERS: Record<string, string[]> = {
+// 额外的触发词映射（用于增强匹配）- 支持中英文
+const EXTRA_TRIGGERS: Record<string, { zh?: string[]; en?: string[] }> = {
   // === Anthropic 官方技能 ===
-  "algorithmic-art": ["算法艺术", "生成艺术", "generative", "art", "艺术", "算法绘画", "procedural"],
-  "doc-coauthoring": ["协作", "coauthor", "共同编辑", "文档协作", "协同写作"],
-  "docx": ["Word", "文档", "docx", "doc", "Microsoft Word", "办公文档"],
-  "pdf": ["PDF", "pdf文件", "导出PDF", "PDF生成", "便携文档"],
-  "pptx": ["PPT", "演示文稿", "PowerPoint", "幻灯片", "slides", "presentation"],
-  "xlsx": ["Excel", "电子表格", "spreadsheet", "表格", "数据分析", "xlsx"],
-  "web-artifacts-builder": ["web artifacts", "网页工件", "HTML生成", "网页构建"],
-  "frontend-design": ["设计", "UI", "样式", "组件", "页面", "布局", "CSS", "React", "Vue", "前端", "界面", "交互"],
+  "algorithmic-art": {
+    zh: ["算法艺术", "生成艺术", "艺术", "算法绘画"],
+    en: ["algorithmic art", "generative art", "art", "procedural", "generative"],
+  },
+  "doc-coauthoring": {
+    zh: ["协作", "共同编辑", "文档协作", "协同写作"],
+    en: ["coauthor", "collaboration", "document collaboration", "co-authoring"],
+  },
+  "docx": {
+    zh: ["Word", "文档", "办公文档"],
+    en: ["docx", "doc", "word", "microsoft word", "office document"],
+  },
+  "pdf": {
+    zh: ["PDF", "pdf文件", "导出PDF", "PDF生成", "便携文档"],
+    en: ["pdf", "pdf file", "export pdf", "pdf generation"],
+  },
+  "pptx": {
+    zh: ["PPT", "演示文稿", "PowerPoint", "幻灯片"],
+    en: ["pptx", "ppt", "powerpoint", "slides", "presentation"],
+  },
+  "xlsx": {
+    zh: ["Excel", "电子表格", "表格", "数据分析"],
+    en: ["xlsx", "excel", "spreadsheet", "data analysis"],
+  },
+  "web-artifacts-builder": {
+    zh: ["网页工件", "HTML生成", "网页构建"],
+    en: ["web artifacts", "html generation", "web builder"],
+  },
+  "frontend-design": {
+    zh: ["设计", "UI", "样式", "组件", "页面", "布局", "CSS", "React", "Vue", "前端", "界面", "交互"],
+    en: ["design", "ui", "styling", "component", "page", "layout", "css", "react", "vue", "frontend", "interface", "interaction"],
+  },
 
   // === 用户本地技能（最高优先级）===
-  "modern-frontend-design": ["现代前端", "前端设计", "UI设计", "界面设计", "设计系统", "design system", "美学", "视觉", "React设计", "Vue设计", "组件设计", "neo-brutalist", "glassmorphism", "art deco"],
-  "open-source-librarian": ["开源", "开源库", "库实现", "源码", "GitHub", "源代码", "library", "implementation", "permalink", "代码引用", "查源码", "开源项目", "原理", "实现原理", "怎么实现", "如何工作", "工作机制", "底层", "内部实现"],
-  "browser": ["浏览器", "Chrome", "CDP", "DevTools", "自动化", "scraping", "抓取", "截图", "screenshot", "browser-start", "browser-nav", "puppeteer"],
-  // webapp-testing 扩展触发词（与原有合并）
+  "modern-frontend-design": {
+    zh: ["现代前端", "前端设计", "UI设计", "界面设计", "设计系统", "美学", "视觉", "React设计", "Vue设计", "组件设计"],
+    en: ["modern frontend", "frontend design", "ui design", "interface design", "design system", "aesthetic", "visual", "react design", "vue design", "component design", "neo-brutalist", "glassmorphism", "art deco"],
+  },
+  "open-source-librarian": {
+    zh: ["开源", "开源库", "库实现", "源码", "GitHub", "源代码", "代码引用", "查源码", "看源码", "读源码", "开源项目", "原理", "实现原理", "怎么实现", "如何工作", "工作机制", "底层", "内部实现", "响应式原理", "虚拟DOM原理", "组件原理", "底层原理", "核心原理"],
+    en: ["open source", "library", "implementation", "source code", "github", "permalink", "code reference", "check source", "view source", "read source", "principle", "implementation principle", "how to implement", "how it works", "mechanism", "underlying", "internal", "reactivity", "virtual dom", "component"],
+  },
+  "browser": {
+    zh: ["浏览器", "Chrome", "CDP", "DevTools", "自动化", "抓取", "截图"],
+    en: ["browser", "chrome", "cdp", "devtools", "automation", "scraping", "screenshot", "puppeteer"],
+  },
 
   // === ClaudeKit 独有技能 ===
-  "aesthetic": ["美学", "审美", "视觉风格", "aesthetic", "设计感"],
-  "ai-multimodal": ["多模态", "图像理解", "视觉AI", "multimodal", "vision"],
-  "backend-development": ["后端", "服务端", "API开发", "backend", "server"],
-  "better-auth": ["认证", "授权", "登录", "auth", "authentication", "JWT"],
-  "chrome-devtools": ["Chrome", "DevTools", "浏览器调试", "开发者工具"],
-  "claude-code": ["Claude Code", "CLI", "命令行"],
-  "collision-zone-thinking": ["碰撞思维", "问题分析", "矛盾分析"],
-  "context-engineering": ["上下文工程", "prompt工程", "提示词"],
-  "databases": ["数据库", "SQL", "MySQL", "PostgreSQL", "MongoDB", "Redis"],
-  "defense-in-depth": ["深度防御", "安全策略", "多层防护"],
-  "devops": ["DevOps", "CI/CD", "部署", "运维", "Docker", "K8s"],
-  "docs-seeker": ["文档搜索", "API文档", "查文档"],
-  "frontend-development": ["前端开发", "JavaScript", "TypeScript", "框架"],
-  "google-adk-python": ["Google ADK", "Python", "Google API"],
-  "inversion-exercise": ["逆向思维", "反向推理"],
-  "mcp-management": ["MCP管理", "服务器管理"],
-  "media-processing": ["媒体处理", "音视频", "转码", "剪辑"],
-  "mermaidjs-v11": ["Mermaid", "流程图", "时序图", "图表绘制"],
-  "meta-pattern-recognition": ["模式识别", "元认知", "规律发现"],
-  "repomix": ["代码库", "仓库分析", "代码统计"],
-  "root-cause-tracing": ["根因分析", "问题追踪", "故障排查"],
-  "scale-game": ["规模化", "扩展性", "性能优化"],
-  "sequential-thinking": ["顺序思考", "逐步推理", "step-by-step"],
-  "shopify": ["Shopify", "电商", "在线商店"],
-  "simplification-cascades": ["简化", "降复杂度", "重构"],
-  "systematic-debugging": ["系统调试", "debug", "排错"],
-  "ui-styling": ["UI样式", "CSS", "样式设计"],
-  "verification-before-completion": ["验证", "检查", "确认完成"],
-  "web-frameworks": ["Web框架", "Express", "Fastify", "Koa", "Next.js"],
-  "when-stuck": ["卡住", "stuck", "困难", "求助"],
+  "aesthetic": {
+    zh: ["美学", "审美", "视觉风格", "设计感"],
+    en: ["aesthetic", "visual style", "design sense"],
+  },
+  "ai-multimodal": {
+    zh: ["多模态", "图像理解", "视觉AI"],
+    en: ["multimodal", "vision", "image understanding", "visual ai"],
+  },
+  "backend-development": {
+    zh: ["后端", "服务端", "API开发"],
+    en: ["backend", "server", "api development", "backend development"],
+  },
+  "better-auth": {
+    zh: ["认证", "授权", "登录"],
+    en: ["auth", "authentication", "authorization", "login", "jwt"],
+  },
+  "chrome-devtools": {
+    zh: ["Chrome", "DevTools", "浏览器调试", "开发者工具"],
+    en: ["chrome", "devtools", "browser debugging", "developer tools"],
+  },
+  "claude-code": {
+    zh: ["Claude Code", "CLI", "命令行"],
+    en: ["claude code", "cli", "command line"],
+  },
+  "collision-zone-thinking": {
+    zh: ["碰撞思维", "问题分析", "矛盾分析"],
+    en: ["collision zone", "problem analysis", "contradiction"],
+  },
+  "context-engineering": {
+    zh: ["上下文工程", "prompt工程", "提示词"],
+    en: ["context engineering", "prompt engineering", "prompt"],
+  },
+  "databases": {
+    zh: ["数据库", "SQL", "MySQL", "PostgreSQL", "MongoDB", "Redis"],
+    en: ["database", "sql", "mysql", "postgresql", "mongodb", "redis"],
+  },
+  "defense-in-depth": {
+    zh: ["深度防御", "安全策略", "多层防护"],
+    en: ["defense in depth", "security strategy", "layered defense"],
+  },
+  "devops": {
+    zh: ["DevOps", "CI/CD", "部署", "运维", "Docker", "K8s"],
+    en: ["devops", "ci/cd", "deployment", "operations", "docker", "kubernetes"],
+  },
+  "docs-seeker": {
+    zh: ["文档搜索", "API文档", "查文档"],
+    en: ["docs search", "api documentation", "documentation"],
+  },
+  "frontend-development": {
+    zh: ["前端开发", "JavaScript", "TypeScript", "框架"],
+    en: ["frontend development", "javascript", "typescript", "framework"],
+  },
+  "google-adk-python": {
+    zh: ["Google ADK", "Python", "Google API"],
+    en: ["google adk", "python", "google api"],
+  },
+  "inversion-exercise": {
+    zh: ["逆向思维", "反向推理"],
+    en: ["inversion", "reverse thinking"],
+  },
+  "mcp-management": {
+    zh: ["MCP管理", "服务器管理"],
+    en: ["mcp management", "server management"],
+  },
+  "media-processing": {
+    zh: ["媒体处理", "音视频", "转码", "剪辑"],
+    en: ["media processing", "audio video", "transcoding", "editing"],
+  },
+  "mermaidjs-v11": {
+    zh: ["Mermaid", "流程图", "时序图", "图表绘制"],
+    en: ["mermaid", "flowchart", "sequence diagram", "chart"],
+  },
+  "meta-pattern-recognition": {
+    zh: ["模式识别", "元认知", "规律发现"],
+    en: ["pattern recognition", "metacognition", "pattern discovery"],
+  },
+  "repomix": {
+    zh: ["代码库", "仓库分析", "代码统计"],
+    en: ["codebase", "repository analysis", "code stats"],
+  },
+  "root-cause-tracing": {
+    zh: ["根因分析", "问题追踪", "故障排查"],
+    en: ["root cause", "problem tracing", "troubleshooting"],
+  },
+  "scale-game": {
+    zh: ["规模化", "扩展性", "性能优化"],
+    en: ["scale", "scalability", "performance optimization"],
+  },
+  "sequential-thinking": {
+    zh: ["顺序思考", "逐步推理"],
+    en: ["sequential thinking", "step by step", "reasoning"],
+  },
+  "shopify": {
+    zh: ["Shopify", "电商", "在线商店"],
+    en: ["shopify", "ecommerce", "online store"],
+  },
+  "simplification-cascades": {
+    zh: ["简化", "降复杂度", "重构"],
+    en: ["simplification", "reduce complexity", "refactor"],
+  },
+  "systematic-debugging": {
+    zh: ["系统调试", "debug", "排错"],
+    en: ["systematic debugging", "debug", "troubleshoot"],
+  },
+  "ui-styling": {
+    zh: ["UI样式", "CSS", "样式设计"],
+    en: ["ui styling", "css", "styling"],
+  },
+  "verification-before-completion": {
+    zh: ["验证", "检查", "确认完成"],
+    en: ["verification", "check", "confirm completion"],
+  },
+  "web-frameworks": {
+    zh: ["Web框架", "Express", "Fastify", "Koa", "Next.js"],
+    en: ["web framework", "express", "fastify", "koa", "next.js"],
+  },
+  "when-stuck": {
+    zh: ["卡住", "困难", "求助"],
+    en: ["stuck", "difficulty", "help"],
+  },
 
   // === 社区技能 ===
-  "webapp-testing": ["E2E", "e2e", "端到端测试", "playwright", "浏览器测试", "web测试", "前端测试", "自动化测试", "UI测试", "with_server", "网页测试"],
-  "code-review": ["审查", "review", "PR", "代码质量", "bug", "安全"],
-  "mcp-builder": ["MCP", "服务器", "集成", "工具开发", "API"],
-  "skill-creator": ["创建技能", "新技能", "技能开发", "skill"],
-  "document-skills": ["文档", "Markdown", "PDF", "Word", "文件"],
-  "canvas-design": ["画布", "图表", "可视化", "Canvas", "图形"],
-  "artifacts-builder": ["artifacts", "构建", "生成器"],
-  "brand-guidelines": ["品牌", "指南", "风格", "brand"],
-  "content-research-writer": ["研究", "调研", "内容", "写作"],
-  "changelog-generator": ["changelog", "更新日志", "版本"],
-  "image-enhancer": ["图片", "图像", "增强", "image"],
-  "file-organizer": ["文件", "整理", "组织", "organize"],
-  "invoice-organizer": ["发票", "invoice", "账单"],
-  "meeting-insights-analyzer": ["会议", "meeting", "分析"],
-  "lead-research-assistant": ["线索", "lead", "调研"],
-  "domain-name-brainstormer": ["域名", "domain", "命名"],
-  "developer-growth-analysis": ["开发者", "成长", "分析"],
-  "internal-comms": ["内部沟通", "通讯", "communication"],
-  "slack-gif-creator": ["slack", "gif", "动图"],
-  "video-downloader": ["视频", "下载", "video"],
-  "theme-factory": ["主题", "theme", "皮肤"],
-  "raffle-winner-picker": ["抽奖", "raffle", "随机"],
-  "competitive-ads-extractor": ["广告", "竞品", "ads"],
+  "webapp-testing": {
+    zh: ["E2E", "e2e", "端到端测试", "playwright", "浏览器测试", "web测试", "前端测试", "自动化测试", "UI测试", "网页测试"],
+    en: ["e2e", "end to end test", "playwright", "browser test", "web test", "frontend test", "automation test", "ui test"],
+  },
+  "code-review": {
+    zh: ["审查", "review", "PR", "代码质量", "bug", "安全"],
+    en: ["review", "code review", "pr", "pull request", "code quality", "bug", "security"],
+  },
+  "mcp-builder": {
+    zh: ["MCP", "服务器", "集成", "工具开发", "API"],
+    en: ["mcp", "server", "integration", "tool development", "api"],
+  },
+  "skill-creator": {
+    zh: ["创建技能", "新技能", "技能开发"],
+    en: ["create skill", "new skill", "skill development"],
+  },
+  "document-skills": {
+    zh: ["文档", "Markdown", "PDF", "Word", "文件"],
+    en: ["documentation", "markdown", "pdf", "word", "file"],
+  },
+  "canvas-design": {
+    zh: ["画布", "图表", "可视化", "Canvas", "图形"],
+    en: ["canvas", "chart", "visualization", "graphics"],
+  },
+  "artifacts-builder": {
+    zh: ["artifacts", "构建", "生成器"],
+    en: ["artifacts", "builder", "generator"],
+  },
+  "brand-guidelines": {
+    zh: ["品牌", "指南", "风格"],
+    en: ["brand", "guidelines", "style"],
+  },
+  "content-research-writer": {
+    zh: ["研究", "调研", "内容", "写作"],
+    en: ["research", "content", "writing"],
+  },
+  "changelog-generator": {
+    zh: ["changelog", "更新日志", "版本"],
+    en: ["changelog", "update log", "version"],
+  },
+  "image-enhancer": {
+    zh: ["图片", "图像", "增强"],
+    en: ["image", "picture", "enhance"],
+  },
+  "file-organizer": {
+    zh: ["文件", "整理", "组织"],
+    en: ["file", "organize", "organization"],
+  },
+  "invoice-organizer": {
+    zh: ["发票", "账单"],
+    en: ["invoice", "bill"],
+  },
+  "meeting-insights-analyzer": {
+    zh: ["会议", "分析"],
+    en: ["meeting", "analysis"],
+  },
+  "lead-research-assistant": {
+    zh: ["线索", "调研"],
+    en: ["lead", "research"],
+  },
+  "domain-name-brainstormer": {
+    zh: ["域名", "命名"],
+    en: ["domain", "naming"],
+  },
+  "developer-growth-analysis": {
+    zh: ["开发者", "成长", "分析"],
+    en: ["developer", "growth", "analysis"],
+  },
+  "internal-comms": {
+    zh: ["内部沟通", "通讯"],
+    en: ["internal communication", "communication"],
+  },
+  "slack-gif-creator": {
+    zh: ["slack", "gif", "动图"],
+    en: ["slack", "gif", "animated"],
+  },
+  "video-downloader": {
+    zh: ["视频", "下载"],
+    en: ["video", "download"],
+  },
+  "theme-factory": {
+    zh: ["主题", "皮肤"],
+    en: ["theme", "skin"],
+  },
+  "raffle-winner-picker": {
+    zh: ["抽奖", "随机"],
+    en: ["raffle", "random", "winner"],
+  },
+  "competitive-ads-extractor": {
+    zh: ["广告", "竞品"],
+    en: ["ads", "advertisement", "competitor"],
+  },
 };
 
 // ============================================
-// 意图识别模式
+// 意图识别模式 - 支持中英文
 // ============================================
 
 const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.CREATE,
     patterns: [
+      // Chinese patterns
       /创建|新建|生成|开发|实现|构建|搭建|设计|制作|编写|写一个|做一个|想一个|想出/,
-      /create|build|implement|develop|make|design|generate|write|think of/i,
       /帮我.*(页面|组件|界面|功能|网站|应用)/,
+      // English patterns
+      /create|build|implement|develop|make|design|generate|write|think of/i,
       /add\s+(a|new)|implement\s+new/i,
     ],
     weight: 10,
@@ -209,12 +403,13 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.RESEARCH,
     patterns: [
+      // Chinese patterns
       /查看|查阅|研究|阅读|看看|学习/,
       /源码|源代码|实现原理|怎么实现|如何工作|底层|内部/,
+      /原理|工作机制|内部实现|底层原理|核心原理/,
+      // English patterns
       /look\s+at|examine|study|research|read/i,
       /implementation|source\s*code|how\s+.*\s+works|internals/i,
-      // 原理研究相关 - 更明确的模式
-      /原理|工作机制|内部实现|底层原理|核心原理/,
     ],
     weight: 10,
   },
@@ -222,8 +417,10 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.RESEARCH,
     patterns: [
+      // Chinese patterns
       /了解.*原理|理解.*原理|学习.*原理|研究.*原理/,
       /.*响应式原理|.*虚拟DOM原理|.*组件原理|.*框架原理/,
+      // English patterns
       /how.*works|understand.*implementation|explain.*internals/i,
     ],
     weight: 12,
@@ -231,7 +428,9 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.DEBUG,
     patterns: [
+      // Chinese patterns
       /修复|修bug|调试|排错|解决.*问题|为什么.*不工作|报错|错误|异常|失败/,
+      // English patterns
       /fix|debug|troubleshoot|solve|error|bug|issue|problem/i,
       /why\s+.*\s+not\s+working|doesn't\s+work/i,
     ],
@@ -240,7 +439,9 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.REFACTOR,
     patterns: [
+      // Chinese patterns
       /重构|优化|改进|简化|整理|清理|提升性能/,
+      // English patterns
       /refactor|optimize|improve|simplify|clean\s*up|performance/i,
     ],
     weight: 7,
@@ -248,9 +449,10 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.DOCUMENT,
     patterns: [
-      /文档|说明|注释|readme|changelog|api\s*doc/i,
-      /写文档|添加注释|编写说明|生成文档/,
-      /document|comment|annotation/i,
+      // Chinese patterns
+      /文档|说明|注释|写文档|添加注释|编写说明|生成文档/,
+      // English patterns
+      /document|comment|annotation|readme|changelog|api\s*doc/i,
     ],
     weight: 6,
   },
@@ -265,7 +467,9 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.TEST_RUN,
     patterns: [
+      // Chinese patterns
       /运行.*测试|执行测试|跑测试/,
+      // English patterns
       /run.*test|execute.*test|test.*run/i,
       /npm\s+test|npm\s+test:run|vitest|jest|playwright\s+test/i,
     ],
@@ -275,7 +479,9 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.TEST_WRITE_UNIT,
     patterns: [
+      // Chinese patterns
       /写单元测试|编写单元测试|添加单元测试|创建单元测试/,
+      // English patterns
       /write.*unit.*test|create.*unit.*test|add.*unit.*test/i,
     ],
     weight: 7,
@@ -284,7 +490,9 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.TEST_WRITE_INTEGRATION,
     patterns: [
+      // Chinese patterns
       /写集成测试|编写集成测试|添加集成测试|创建集成测试/,
+      // English patterns
       /write.*integration.*test|create.*integration.*test/i,
     ],
     weight: 7,
@@ -293,8 +501,10 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.TEST_WRITE_E2E,
     patterns: [
+      // Chinese patterns
       /写E2E测试|编写端到端测试|添加E2E测试|创建E2E测试/,
       /写e2e|e2e测试|端到端/,
+      // English patterns
       /write.*e2e.*test|create.*e2e.*test|end.*to.*end.*test/i,
     ],
     weight: 7,
@@ -302,17 +512,20 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.ANALYZE,
     patterns: [
-      /审查|review|分析|检查|评估|诊断/,
-      /代码审查|code\s*review|PR|pull\s*request/i,
+      // Chinese patterns
+      /审查|分析|检查|评估|诊断|代码审查/,
+      // English patterns
       /analyze|inspect|evaluate|assess/i,
+      /code\s*review|pr|pull\s*request/i,
     ],
     weight: 7,
   },
   {
     intent: IntentType.CONVERT,
     patterns: [
-      /转换|转成|导出|转为|格式化/,
-      /生成.*文件|导出.*格式/,
+      // Chinese patterns
+      /转换|转成|导出|转为|格式化|生成.*文件|导出.*格式/,
+      // English patterns
       /convert|export|transform\s+to|format\s+as/i,
     ],
     weight: 5,
@@ -320,7 +533,9 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.DEPLOY,
     patterns: [
+      // Chinese patterns
       /部署|发布|上线|打包|构建发布/,
+      // English patterns
       /deploy|release|publish|ship|launch/i,
     ],
     weight: 5,
@@ -328,15 +543,17 @@ const INTENT_PATTERNS: IntentPattern[] = [
   {
     intent: IntentType.CHAT,
     patterns: [
-      /你好|hello|hi|嗨|谢谢|thanks|是什么|什么是|解释|介绍/i,
-      /what\s+is|explain|tell\s+me\s+about/i,
+      // Chinese patterns
+      /你好|嗨|谢谢|是什么|什么是|解释|介绍/,
+      // English patterns
+      /hello|hi|thanks|what\s+is|explain|tell\s+me\s+about/i,
     ],
     weight: 3,
   },
 ];
 
 // ============================================
-// 增强的技能配置（意图感知）
+// 增强的技能配置（意图感知）- 支持中英文触发词
 // ============================================
 
 const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
@@ -353,12 +570,21 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
       { word: "React", weight: 2 },
       { word: "Vue", weight: 2 },
       { word: "前端", weight: 2 },
+      // English
+      { word: "design", weight: 3 },
+      { word: "interface", weight: 4 },
+      { word: "component", weight: 3 },
+      { word: "page", weight: 3 },
+      { word: "layout", weight: 4 },
+      { word: "frontend", weight: 2 },
     ],
     excludes: [
+      // Chinese
       "源码", "源代码",
       "实现原理", "怎么实现", "如何工作",
       "工作机制", "内部实现", "底层原理", "核心原理",
-      "implementation", "source code", "internals"
+      // English
+      "source code", "implementation", "internals", "how it works",
     ],
     requiredIntents: [IntentType.CREATE, IntentType.REFACTOR],
     excludedIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
@@ -368,25 +594,28 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
     triggers: [
       { word: "现代前端", weight: 5 },
       { word: "设计系统", weight: 5 },
-      { word: "design system", weight: 5 },
       { word: "美学", weight: 4 },
       { word: "视觉", weight: 3 },
       { word: "neo-brutalist", weight: 6 },
       { word: "glassmorphism", weight: 6 },
+      // English
+      { word: "design system", weight: 5 },
+      { word: "aesthetic", weight: 4 },
+      { word: "visual", weight: 3 },
     ],
-    excludes: ["源码", "源代码"],
+    excludes: ["源码", "源代码", "source code"],
     requiredIntents: [IntentType.CREATE],
     excludedIntents: [IntentType.RESEARCH],
     priority: 7,
   },
   "aesthetic": {
-    excludes: ["源码", "实现"],
+    excludes: ["源码", "实现", "source code", "implementation"],
     requiredIntents: [IntentType.CREATE],
     excludedIntents: [IntentType.RESEARCH],
     priority: 5,
   },
   "ui-styling": {
-    excludes: ["源码", "实现原理"],
+    excludes: ["源码", "实现原理", "source code", "implementation"],
     requiredIntents: [IntentType.CREATE, IntentType.REFACTOR],
     excludedIntents: [IntentType.RESEARCH],
     priority: 5,
@@ -414,19 +643,19 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
 
   // === 后端开发类：需要 CREATE/DEBUG 意图 ===
   "backend-development": {
-    excludes: ["源码", "实现原理"],
+    excludes: ["源码", "实现原理", "source code", "implementation"],
     requiredIntents: [IntentType.CREATE, IntentType.DEBUG, IntentType.REFACTOR],
     excludedIntents: [IntentType.RESEARCH],
     priority: 6,
   },
   "frontend-development": {
-    excludes: ["源码", "实现原理"],
+    excludes: ["源码", "实现原理", "source code", "implementation"],
     requiredIntents: [IntentType.CREATE, IntentType.DEBUG, IntentType.REFACTOR],
     excludedIntents: [IntentType.RESEARCH],
     priority: 6,
   },
   "web-frameworks": {
-    excludes: ["源码", "源代码", "实现"],
+    excludes: ["源码", "源代码", "实现", "source code", "implementation"],
     requiredIntents: [IntentType.CREATE, IntentType.DEBUG],
     excludedIntents: [IntentType.RESEARCH],
     priority: 5,
@@ -434,7 +663,7 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
 
   // === 数据库类：需要 CREATE/DEBUG 意图 ===
   "databases": {
-    excludes: ["源码", "实现原理"],
+    excludes: ["源码", "实现原理", "source code", "implementation"],
     requiredIntents: [IntentType.CREATE, IntentType.DEBUG, IntentType.REFACTOR],
     excludedIntents: [IntentType.RESEARCH],
     priority: 6,
@@ -449,6 +678,10 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
       { word: "playwright", weight: 7 },
       { word: "浏览器测试", weight: 5 },
       { word: "web测试", weight: 5 },
+      // English
+      { word: "end to end test", weight: 6 },
+      { word: "browser test", weight: 5 },
+      { word: "web test", weight: 5 },
     ],
     requiredIntents: [
       IntentType.TEST_RUN,        // 运行E2E测试
@@ -465,9 +698,11 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
   "code-review": {
     triggers: [
       { word: "审查", weight: 5 },
-      { word: "review", weight: 5 },
-      { word: "PR", weight: 4 },
       { word: "代码质量", weight: 4 },
+      // English
+      { word: "review", weight: 5 },
+      { word: "code review", weight: 5 },
+      { word: "pr", weight: 4 },
     ],
     requiredIntents: [IntentType.ANALYZE],
     priority: 7,
@@ -489,10 +724,19 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
       { word: "内部实现", weight: 6 },
       { word: "底层原理", weight: 7 },
       { word: "核心原理", weight: 7 },
-      { word: "implementation", weight: 5 },
       { word: "查源码", weight: 7 },
       { word: "看源码", weight: 7 },
       { word: "读源码", weight: 7 },
+      // English
+      { word: "source code", weight: 6 },
+      { word: "open source", weight: 4 },
+      { word: "implementation", weight: 5 },
+      { word: "principle", weight: 6 },
+      { word: "reactivity", weight: 8 },
+      { word: "virtual dom", weight: 8 },
+      { word: "how it works", weight: 6 },
+      { word: "underlying", weight: 5 },
+      { word: "internal", weight: 6 },
     ],
     requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
     priority: 8,
@@ -549,7 +793,6 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
   "docx": {
     triggers: [
       { word: "Word", weight: 5 },
-      { word: "docx", weight: 5 },
       { word: "文档", weight: 3 },
     ],
     requiredIntents: [IntentType.CONVERT, IntentType.CREATE],
@@ -568,7 +811,6 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
     triggers: [
       { word: "Excel", weight: 5 },
       { word: "电子表格", weight: 5 },
-      { word: "xlsx", weight: 5 },
     ],
     requiredIntents: [IntentType.CONVERT, IntentType.CREATE],
     priority: 6,
@@ -599,7 +841,7 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
 
   // === 认证授权类 ===
   "better-auth": {
-    excludes: ["源码", "实现原理"],
+    excludes: ["源码", "实现原理", "source code", "implementation"],
     requiredIntents: [IntentType.CREATE, IntentType.DEBUG],
     excludedIntents: [IntentType.RESEARCH],
     priority: 6,
@@ -655,7 +897,6 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
 
   // === 思维/方法论类：允许更多意图 ===
   "collision-zone-thinking": {
-    // 思维方法类不限制意图
     priority: 4,
   },
   "context-engineering": {
@@ -735,7 +976,6 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
     priority: 4,
   },
   "claude-code": {
-    // Claude Code 帮助类不限制
     priority: 4,
   },
 };
@@ -904,10 +1144,16 @@ async function scanSkillsDirectory(baseDir: string, maxDepth: number = 2): Promi
 
       if (!meta) return;
 
-      // 获取触发词
-      const triggers = EXTRA_TRIGGERS[name] || [];
+      // Get triggers for both languages
+      const triggerConfig = EXTRA_TRIGGERS[name];
+      const triggers: string[] = [];
 
-      // 从描述中提取额外关键词
+      if (triggerConfig) {
+        if (triggerConfig.zh) triggers.push(...triggerConfig.zh);
+        if (triggerConfig.en) triggers.push(...triggerConfig.en);
+      }
+
+      // Extract extra keywords from description
       const descWords = meta.description
         .split(/[\s,，、]+/)
         .filter(w => w.length > 1 && w.length < 10);
@@ -920,13 +1166,13 @@ async function scanSkillsDirectory(baseDir: string, maxDepth: number = 2): Promi
         triggers: allTriggers,
         category: inferCategory(name, meta.description),
         priority: 5,
-        path: validatedPath,  // Store validated path
+        path: validatedPath,
         loaded: false,
       });
 
-      console.error(`[Skills Controller] 发现技能: ${name}`);
+      console.error(`[Skills Controller] Found skill: ${name}`);
     } catch (error) {
-      console.error(`[Skills Controller] 加载技能失败: ${sanitizePathForLog(name)}`);
+      console.error(`[Skills Controller] Failed to load skill: ${sanitizePathForLog(name)}`);
     }
   }
 
@@ -1018,13 +1264,19 @@ function containsExcludeWords(message: string, excludes: string[]): boolean {
 }
 
 /**
- * 增强版上下文分析 - 支持意图识别和排除机制
+ * 增强版上下文分析 - 支持意图识别和排除机制（多语言）
  */
 function analyzeContext(userMessage: string): {
   matches: { skill: SkillMeta; score: number; matchedTriggers: string[] }[];
   primaryIntent: IntentType;
+  locale: "en" | "zh";
 } {
   const messageLower = userMessage.toLowerCase();
+
+  // Detect language of user message
+  const detectedLocale = detectLanguage(userMessage);
+  // Ensure locale is "en" or "zh" (not "auto")
+  const locale: "en" | "zh" = detectedLocale === "auto" ? "en" : detectedLocale;
 
   // 1. 识别用户意图
   const detectedIntents = detectIntents(userMessage);
@@ -1032,19 +1284,21 @@ function analyzeContext(userMessage: string): {
 
   // 特殊处理：编写单元测试时不激活特定技能
   if (primaryIntent === IntentType.TEST_WRITE_UNIT) {
-    console.error(`[Skills Controller] 单元测试编写场景，使用通用编程能力`);
+    console.error(`[Skills Controller] Unit test writing scenario, using general programming capabilities`);
     return {
-      matches: [],  // 不激活特定技能
+      matches: [],
       primaryIntent,
+      locale,
     };
   }
 
   // 特殊处理：编写集成测试时不激活特定技能
   if (primaryIntent === IntentType.TEST_WRITE_INTEGRATION) {
-    console.error(`[Skills Controller] 集成测试编写场景，使用通用编程能力`);
+    console.error(`[Skills Controller] Integration test writing scenario, using general programming capabilities`);
     return {
-      matches: [],  // 不激活特定技能
+      matches: [],
       primaryIntent,
+      locale,
     };
   }
 
@@ -1052,7 +1306,7 @@ function analyzeContext(userMessage: string): {
   const secondaryIntents = detectedIntents.slice(1, 3).map(d => d.intent);
   const allIntents = [primaryIntent, ...secondaryIntents];
 
-  console.error(`[Skills Controller] 识别意图: ${primaryIntent} (次要: ${secondaryIntents.join(", ") || "无"})`);
+  console.error(`[Skills Controller] Detected intent: ${primaryIntent} (secondary: ${secondaryIntents.join(", ") || "none"})`);
 
   const matchedSkills: { skill: SkillMeta; score: number; matchedTriggers: string[] }[] = [];
 
@@ -1063,7 +1317,7 @@ function analyzeContext(userMessage: string): {
     if (config) {
       // 检查排除意图
       if (config.excludedIntents?.includes(primaryIntent)) {
-        console.error(`[Skills Controller] ${skill.name} 被意图排除: ${primaryIntent}`);
+        console.error(`[Skills Controller] ${skill.name} excluded by intent: ${primaryIntent}`);
         continue;
       }
 
@@ -1078,7 +1332,7 @@ function analyzeContext(userMessage: string): {
 
       // 检查排除词
       if (config.excludes && containsExcludeWords(userMessage, config.excludes)) {
-        console.error(`[Skills Controller] ${skill.name} 被排除词过滤`);
+        console.error(`[Skills Controller] ${skill.name} filtered by exclusion words`);
         continue;
       }
     }
@@ -1125,14 +1379,15 @@ function analyzeContext(userMessage: string): {
 
   // 记录匹配结果
   if (matchedSkills.length > 0) {
-    console.error(`[Skills Controller] 匹配结果: ${matchedSkills.slice(0, 5).map(m => `${m.skill.name}(${m.score})`).join(", ")}`);
+    console.error(`[Skills Controller] Match results: ${matchedSkills.slice(0, 5).map(m => `${m.skill.name}(${m.score})`).join(", ")}`);
   } else {
-    console.error(`[Skills Controller] 无匹配技能`);
+    console.error(`[Skills Controller] No matching skills`);
   }
 
   return {
     matches: matchedSkills,
     primaryIntent,
+    locale,
   };
 }
 
@@ -1161,30 +1416,30 @@ function createServer() {
       tools: [
         {
           name: "analyze_and_route",
-          description: `**重要：在处理任何非简单对话任务前，必须首先调用此工具**
+          description: `**IMPORTANT: Call this tool first before handling any non-simple conversational task**
 
-这是技能路由核心 - 为每个任务自动匹配最合适的专家技能。
+This is the skill routing core - automatically matches the most appropriate expert skills for each task.
 
-已注册 ${SKILL_REGISTRY.length} 个技能，涵盖：前端开发、后端开发、数据库、DevOps、设计、文档处理、测试、AI/ML 等。
+${SKILL_REGISTRY.length} skills registered, covering: frontend, backend, databases, DevOps, design, documentation, testing, AI/ML, etc.
 
-**调用规则**：
-- ✅ **必须调用**：任何编程、设计、文档处理、技术任务
-- ✅ **必须调用**：研究框架/库的**原理**（如"Vue响应式原理"、"React虚拟DOM"）
-- ✅ **必须调用**：查看源码、实现机制、内部工作原理
-- ✅ **必须调用**：用户请求创建、构建、开发、处理任何内容
-- ❌ **无需调用**：社交对话（"你好"、"谢谢"）、纯闲聊、**基础概念解释**（如"什么是HTTP？"）
+**Call Rules**:
+- ✅ **MUST call**: Any programming, design, documentation, or technical task
+- ✅ **MUST call**: Research framework/library **principles** (e.g., "Vue reactivity", "React virtual DOM")
+- ✅ **MUST call**: View source code, implementation mechanisms, internal workings
+- ✅ **MUST call**: User requests to create, build, develop, or process anything
+- ❌ **NO need to call**: Social conversation ("hello", "thanks"), casual chat, **basic concept explanation** (e.g., "what is HTTP?")
 
-使用此工具让 Claude 自动获得专家级能力，用户无需知道技能的存在。`,
+Use this tool to let Claude automatically gain expert-level capabilities without users needing to know about the skills.`,
           inputSchema: {
             type: "object",
             properties: {
               user_message: {
                 type: "string",
-                description: "用户的原始消息或任务描述",
+                description: "User's original message or task description",
               },
               max_skills: {
                 type: "number",
-                description: "最多激活的技能数量（默认 1）",
+                description: "Maximum number of skills to activate (default: 1)",
                 default: 1,
               },
             },
@@ -1193,7 +1448,7 @@ function createServer() {
         },
         {
           name: "list_active_skills",
-          description: "列出当前激活的技能",
+          description: "List currently active skills",
           inputSchema: {
             type: "object",
             properties: {},
@@ -1201,13 +1456,13 @@ function createServer() {
         },
         {
           name: "deactivate_skill",
-          description: "停用指定技能，释放上下文空间",
+          description: "Deactivate a specific skill to release context space",
           inputSchema: {
             type: "object",
             properties: {
               skill_name: {
                 type: "string",
-                description: "要停用的技能名称",
+                description: "Name of the skill to deactivate",
               },
             },
             required: ["skill_name"],
@@ -1215,7 +1470,7 @@ function createServer() {
         },
         {
           name: "deactivate_all_skills",
-          description: "停用所有已激活的技能，释放上下文空间",
+          description: "Deactivate all active skills to release context space",
           inputSchema: {
             type: "object",
             properties: {},
@@ -1223,7 +1478,7 @@ function createServer() {
         },
         {
           name: "get_skill_index",
-          description: "获取所有可用技能的完整索引",
+          description: "Get complete index of all available skills",
           inputSchema: {
             type: "object",
             properties: {},
@@ -1231,13 +1486,13 @@ function createServer() {
         },
         {
           name: "load_skill",
-          description: "直接加载指定技能的完整内容",
+          description: "Load the full content of a specific skill",
           inputSchema: {
             type: "object",
             properties: {
               skill_name: {
                 type: "string",
-                description: "要加载的技能名称",
+                description: "Name of the skill to load",
               },
             },
             required: ["skill_name"],
@@ -1245,13 +1500,13 @@ function createServer() {
         },
         {
           name: "search_skills",
-          description: "搜索包含指定关键词的技能",
+          description: "Search for skills containing specific keywords",
           inputSchema: {
             type: "object",
             properties: {
               keyword: {
                 type: "string",
-                description: "搜索关键词",
+                description: "Search keyword",
               },
             },
             required: ["keyword"],
@@ -1273,59 +1528,75 @@ function createServer() {
           // Validate input with Zod schema
           const { user_message, max_skills } = validateAnalyzeAndRouteArgs(args);
 
-        // 使用增强的意图感知分析
-        const { matches, primaryIntent } = analyzeContext(user_message);
-        const skillsToActivate = matches.slice(0, max_skills);
+          // 使用增强的意图感知分析（多语言）
+          const { matches, primaryIntent, locale } = analyzeContext(user_message);
+          const skillsToActivate = matches.slice(0, max_skills);
 
-        if (skillsToActivate.length === 0) {
+          if (skillsToActivate.length === 0) {
+            const noMatchMsg = locale === "zh"
+              ? "未匹配到相关技能，使用通用模式处理"
+              : "No matching skills found, using general mode";
+            const suggestionMsg = locale === "zh"
+              ? "可以使用 search_skills 或 get_skill_index 查看可用技能"
+              : "Use search_skills or get_skill_index to see available skills";
+
+            return {
+              content: [
+                {
+                  type: "text",
+                  text: JSON.stringify({
+                    status: "no_match",
+                    detected_intent: primaryIntent,
+                    locale: locale,
+                    message: noMatchMsg,
+                    suggestion: suggestionMsg,
+                    total_skills: SKILL_REGISTRY.length,
+                  }),
+                },
+              ],
+            };
+          }
+
+          // 加载技能内容
+          const activatedContents: { name: string; content: string }[] = [];
+
+          for (const match of skillsToActivate) {
+            const content = await loadSkillContent(match.skill.name, state);
+            activatedContents.push({ name: match.skill.name, content });
+            state.activeSkills.add(match.skill.name);
+          }
+
+          state.context = user_message;
+          state.lastAnalysis = new Date();
+
+          // Generate localized instructions
+          const activatedMsg = locale === "zh"
+            ? `✅ **已激活技能**：${skillsToActivate.map(match => `${match.skill.name}（${match.skill.category}）`).join("、")}`
+            : `✅ **Activated skills**: ${skillsToActivate.map(match => `${match.skill.name} (${match.skill.category})`).join(", ")}`;
+          const processMsg = locale === "zh"
+            ? "请根据以上激活的技能内容来处理用户请求。任务完成后，请务必调用 deactivate_all_skills 工具来停用技能并释放上下文空间。"
+            : "Please process the user's request based on the activated skill content above. After completing the task, be sure to call deactivate_all_skills to release context space.";
+          const instructions = `${activatedMsg}\n\n${processMsg}`;
+
           return {
             content: [
               {
                 type: "text",
                 text: JSON.stringify({
-                  status: "no_match",
+                  status: "activated",
                   detected_intent: primaryIntent,
-                  message: "未匹配到相关技能，使用通用模式处理",
-                  suggestion: "可以使用 search_skills 或 get_skill_index 查看可用技能",
-                  total_skills: SKILL_REGISTRY.length,
+                  locale: locale,
+                  activated_skills: skillsToActivate.map(match => ({
+                    name: match.skill.name,
+                    category: match.skill.category,
+                    match_reason: match.matchedTriggers,
+                  })),
+                  skill_contents: activatedContents,
+                  instructions: instructions,
                 }),
               },
             ],
           };
-        }
-
-        // 加载技能内容
-        const activatedContents: { name: string; content: string }[] = [];
-
-        for (const match of skillsToActivate) {
-          const content = await loadSkillContent(match.skill.name, state);
-          activatedContents.push({ name: match.skill.name, content });
-          state.activeSkills.add(match.skill.name);
-        }
-
-        state.context = user_message;
-        state.lastAnalysis = new Date();
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify({
-                status: "activated",
-                detected_intent: primaryIntent,
-                activated_skills: skillsToActivate.map(match => ({
-                  name: match.skill.name,
-                  category: match.skill.category,
-                  match_reason: match.matchedTriggers,
-                })),
-                skill_contents: activatedContents,
-                instructions: `✅ **已激活技能**：${skillsToActivate.map(m => `${m.skill.name}（${m.skill.category}）`).join("、")}
-
-请根据以上激活的技能内容来处理用户请求。任务完成后，请务必调用 deactivate_all_skills 工具来停用技能并释放上下文空间。`,
-              }),
-            },
-          ],
-        };
       }
 
       case "list_active_skills": {
@@ -1548,15 +1819,15 @@ function createServer() {
 // ============================================
 
 async function main() {
-  console.error("[Skills Controller] 启动中...");
-  console.error(`[Skills Controller] 技能目录: ${SKILLS_DIRS.join(", ")}`);
+  console.error("[Skills Controller] Starting...");
+  console.error(`[Skills Controller] Skills directories: ${SKILLS_DIRS.join(", ")}`);
 
   // 扫描所有技能目录（先扫描的优先）
   const seenSkills = new Set<string>();
   const allSkills: SkillMeta[] = [];
 
   for (const dir of SKILLS_DIRS) {
-    console.error(`[Skills Controller] 扫描目录: ${dir}`);
+    console.error(`[Skills Controller] Scanning directory: ${dir}`);
     const skills = await scanSkillsDirectory(dir);
 
     for (const skill of skills) {
@@ -1564,20 +1835,20 @@ async function main() {
         seenSkills.add(skill.name);
         allSkills.push(skill);
       } else {
-        console.error(`[Skills Controller] 跳过重复技能: ${skill.name}`);
+        console.error(`[Skills Controller] Skipping duplicate skill: ${skill.name}`);
       }
     }
   }
 
   SKILL_REGISTRY = allSkills;
-  console.error(`[Skills Controller] 已加载 ${SKILL_REGISTRY.length} 个技能（去重后）`);
+  console.error(`[Skills Controller] Loaded ${SKILL_REGISTRY.length} skills (after deduplication)`);
 
   // 启动服务器
   const server = createServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  console.error("[Skills Controller] MCP 服务器已启动");
+  console.error("[Skills Controller] MCP Server started");
 }
 
 main().catch(console.error);

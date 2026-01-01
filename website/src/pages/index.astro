@@ -1,0 +1,450 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import InstallCommand from '../components/InstallCommand.astro';
+import CategoryFilter from '../components/CategoryFilter.astro';
+import SkillGrid from '../components/SkillGrid.astro';
+import { skills } from '../data/skills';
+import { categories } from '../data/categories';
+import { downloadSingleSkill } from '../utils/downloader';
+import { downloadSkillPack, filterSkillsForPack, skillPacks } from '../utils/packager';
+---
+
+<Layout title="Skills Controller - 智能技能编排控制器">
+  <Hero />
+
+  <section id="features" class="features-section">
+    <div class="container">
+      <h2 class="section-title">核心功能</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">智能路由</h3>
+          <p class="feature-description">根据你的意图自动激活最相关的技能，无需手动选择</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">零配置</h3>
+          <p class="feature-description">安装即用，自动发现和加载技能，无需繁琐配置</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3 class="feature-title">自动管理</h3>
+          <p class="feature-description">用完即停，智能管理上下文空间，保持系统高效</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3 class="feature-title">多源支持</h3>
+          <p class="feature-description">支持 Anthropic、ClaudeKit、社区等多种技能来源</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <InstallCommand />
+
+  <div class="skills-container">
+    <div class="container">
+      <div class="skills-header">
+        <h2 class="section-title">技能库</h2>
+        <button class="btn btn-secondary download-pack-btn" id="download-pack">
+          📦 下载技能包
+        </button>
+      </div>
+      <CategoryFilter categories={categories} selectedCategory={null} />
+    </div>
+    <SkillGrid skills={skills} selectedCategory={null} />
+  </div>
+</Layout>
+
+<style>
+  .features-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+    background-color: var(--color-white);
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .feature-card {
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
+
+  .feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .feature-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .feature-description {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .skills-container {
+    padding: var(--spacing-xl) 0;
+  }
+
+  .skills-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 var(--spacing-md);
+  }
+
+  .skills-header h2 {
+    margin: 0;
+  }
+
+  .download-pack-btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9375rem;
+  }
+
+  .download-pack-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  /* 模态框样式 */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+  }
+
+  .modal-body {
+    padding: var(--spacing-md);
+  }
+
+  .modal-description {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .pack-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .pack-button {
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .pack-button:hover {
+    border-color: var(--color-primary);
+    background: var(--color-bg);
+  }
+
+  .pack-name {
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .pack-description {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* 技能详情模态框 */
+  .skill-detail-name {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .skill-detail-meta {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .skill-detail-triggers {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .skill-detail-triggers h4 {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  @media (max-width: 768px) {
+    .skills-header {
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      text-align: center;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script define:vars={{ skills }}>
+  // 分类过滤功能
+  let selectedCategory: string | null = null;
+
+  // 技能数据（从服务器传递）
+  const skillsData = skills;
+
+  // 监听分类按钮点击
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const categoryButton = target.closest('.category-button') as HTMLElement;
+
+    if (categoryButton) {
+      const category = categoryButton.dataset.category;
+
+      // 更新按钮状态
+      document.querySelectorAll('.category-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      categoryButton.classList.add('active');
+
+      // 过滤技能卡片
+      document.querySelectorAll('.skill-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+          (card as HTMLElement).style.display = '';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+
+      selectedCategory = category === 'all' ? null : category;
+    }
+  });
+
+  // 单个下载功能
+  document.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+    const downloadBtn = target.closest('.btn-download') as HTMLElement;
+
+    if (downloadBtn) {
+      const skillId = downloadBtn.dataset.skillId;
+      const skill = skillsData.find(s => s.id === skillId);
+
+      if (skill) {
+        // 动态导入下载函数
+        const { downloadSingleSkill } = await import('../utils/downloader');
+        downloadSingleSkill(skill);
+
+        // 更新按钮状态
+        const originalText = downloadBtn.textContent;
+        downloadBtn.textContent = '已下载!';
+        downloadBtn.style.background = 'var(--color-primary-hover)';
+
+        setTimeout(() => {
+          downloadBtn.textContent = originalText;
+          downloadBtn.style.background = '';
+        }, 2000);
+      }
+    }
+  });
+
+  // 查看详情功能
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const viewBtn = target.closest('.btn-view') as HTMLElement;
+
+    if (viewBtn) {
+      const skillId = viewBtn.dataset.skillId;
+      const skillName = viewBtn.dataset.skillName;
+      const skillDescription = viewBtn.dataset.skillDescription;
+      const skillTriggers = viewBtn.dataset.skillTriggers;
+
+      // 创建详情模态框
+      const modalHtml = `
+        <div class="modal-overlay" id="skill-detail-modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>技能详情</h2>
+              <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="skill-detail-name">${skillName}</div>
+              <p class="skill-detail-description">${skillDescription}</p>
+              <div class="skill-detail-triggers">
+                <h4>触发词：</h4>
+                <p>${skillTriggers}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+      const modal = document.getElementById('skill-detail-modal');
+      const closeBtn = modal?.querySelector('.modal-close');
+
+      const closeModal = () => modal?.remove();
+      closeBtn?.addEventListener('click', closeModal);
+      modal?.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+  });
+
+  // 技能包下载功能
+  const downloadPackBtn = document.getElementById('download-pack');
+  if (downloadPackBtn) {
+    downloadPackBtn.addEventListener('click', () => {
+      // 创建技能包选择模态框
+      const modalHtml = `
+        <div class="modal-overlay" id="pack-modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>下载技能包</h2>
+              <button class="modal-close" id="close-pack-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <p class="modal-description">选择要下载的技能包：</p>
+              <div class="pack-list">
+                ${Object.entries({
+                  frontend: { name: '前端开发技能包', description: '包含 UI 设计、React 组件、样式系统等前端技能' },
+                  backend: { name: '后端开发技能包', description: '包含 API 设计、数据库、服务端架构等后端技能' },
+                  testing: { name: '测试质量技能包', description: '包含 E2E 测试、代码审查、质量保障等测试技能' },
+                  devops: { name: 'DevOps 技能包', description: '包含 CI/CD、Docker、部署等 DevOps 技能' },
+                  fullstack: { name: '全栈开发技能包', description: '包含前端、后端、测试等全栈开发技能' },
+                  all: { name: '完整技能包', description: '包含所有可用的技能' }
+                }).map(([key, pack]) => `
+                  <button class="pack-button" data-pack="${key}">
+                    <div class="pack-name">${pack.name}</div>
+                    <div class="pack-description">${pack.description}</div>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+      const modal = document.getElementById('pack-modal');
+      const closeBtn = document.getElementById('close-pack-modal');
+
+      const closeModal = () => modal?.remove();
+      closeBtn?.addEventListener('click', closeModal);
+      modal?.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      // 绑定下载按钮
+      modal?.querySelectorAll('.pack-button').forEach(button => {
+        button.addEventListener('click', async () => {
+          const packKey = button.dataset.pack as string;
+
+          // 根据选择的包过滤技能
+          let filteredSkills = skillsData;
+          if (packKey === 'frontend') {
+            filteredSkills = skillsData.filter(s => s.category.id === 'frontend');
+          } else if (packKey === 'backend') {
+            filteredSkills = skillsData.filter(s => s.category.id === 'backend');
+          } else if (packKey === 'testing') {
+            filteredSkills = skillsData.filter(s => s.category.id === 'testing');
+          } else if (packKey === 'devops') {
+            filteredSkills = skillsData.filter(s => s.category.id === 'devops');
+          } else if (packKey === 'fullstack') {
+            filteredSkills = skillsData.filter(s =>
+              ['frontend', 'backend', 'testing'].includes(s.category.id)
+            );
+          }
+          // 'all' 不需要过滤
+
+          // 下载技能包
+          const packName = button.querySelector('.pack-name')?.textContent || 'skills';
+          const { downloadSkillPack } = await import('../utils/packager');
+
+          await downloadSkillPack(
+            filteredSkills.map(s => ({
+              id: s.id,
+              name: s.name,
+              content: s.content
+            })),
+            packName
+          );
+
+          closeModal();
+        });
+      });
+    });
+  }
+</script>
