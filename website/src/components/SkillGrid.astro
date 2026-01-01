@@ -1,0 +1,72 @@
+---
+import SkillCard from './SkillCard.astro';
+import type { Skill } from '../data/skills';
+
+interface Props {
+  skills: Skill[];
+  selectedCategory: string | null;
+}
+
+const { skills, selectedCategory } = Astro.props;
+
+const filteredSkills = selectedCategory
+  ? skills.filter(skill => skill.category.id === selectedCategory)
+  : skills;
+---
+
+<section id="skills" class="skills-section">
+  <div class="container">
+    <h2 class="section-title">技能库</h2>
+    <p class="section-description">浏览所有可用的技能，点击下载即可使用</p>
+
+    {filteredSkills.length > 0 ? (
+      <div class="skills-grid">
+        {filteredSkills.map(skill => (
+          <SkillCard skill={skill} />
+        ))}
+      </div>
+    ) : (
+      <p class="no-skills">该分类下暂无技能</p>
+    )}
+  </div>
+</section>
+
+<style>
+  .skills-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .section-description {
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .no-skills {
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+    padding: var(--spacing-xl);
+  }
+
+  @media (max-width: 768px) {
+    .skills-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

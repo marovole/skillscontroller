@@ -1,0 +1,139 @@
+---
+const commands = {
+  npm: 'npm install -g skillscontroller',
+  brew: 'brew install marovole/tap/skillscontroller'
+};
+---
+
+<section id="install" class="install-section">
+  <div class="container">
+    <h2 class="section-title">一键安装</h2>
+    <p class="section-description">选择你喜欢的包管理器，一条命令即可完成安装</p>
+    <div class="install-methods">
+      <div class="install-method">
+        <span class="method-label">npm</span>
+        <code class="install-command">{commands.npm}</code>
+        <button class="copy-button" data-command={commands.npm} data-copy-index="0">
+          复制
+        </button>
+      </div>
+      <div class="install-method">
+        <span class="method-label">Homebrew</span>
+        <code class="install-command">{commands.brew}</code>
+        <button class="copy-button" data-command={commands.brew} data-copy-index="1">
+          复制
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .install-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .section-description {
+    text-align: center;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .install-methods {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .install-method {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md);
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .method-label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    min-width: 80px;
+  }
+
+  .install-command {
+    flex: 1;
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    background: transparent;
+    border: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .copy-button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .copy-button:hover {
+    background: var(--color-primary-hover);
+  }
+
+  @media (max-width: 768px) {
+    .install-method {
+      flex-wrap: wrap;
+    }
+
+    .install-command {
+      width: 100%;
+      order: 2;
+      margin-top: var(--spacing-xs);
+    }
+
+    .copy-button {
+      width: 100%;
+      order: 3;
+    }
+  }
+</style>
+
+<script define:vars={{ commands }}>
+  document.querySelectorAll('.copy-button').forEach(button => {
+    button.addEventListener('click', async () => {
+      const command = button.dataset.command;
+      try {
+        await navigator.clipboard.writeText(command);
+        const originalText = button.textContent;
+        button.textContent = '已复制!';
+        button.style.background = 'var(--color-primary-hover)';
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.background = '';
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    });
+  });
+</script>
