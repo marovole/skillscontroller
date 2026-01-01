@@ -3,3 +3,9 @@ node_modules/
 .DS_Store
 .env
 *.tgz
+
+# Test reports
+test-reports/
+
+# Coverage reports
+coverage/
