@@ -2,6 +2,7 @@
 
 > 智能技能编排控制器 - 集成 GitHub 高星开源项目，为 Claude Code 提供专家级技能
 
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![MCP](https://img.shields.io/badge/MCP-1.0-purple)](https://modelcontextprotocol.io/)
@@ -15,9 +16,12 @@
 
 | 项目 | Stars | 技能数 | 许可证 |
 |:---:|:---:|:---:|:---:|
-| [![Superpowers](https://github.githubassets.com/favicons/favicon.svg) Superpowers](https://github.com/obra/superpowers) | [![13.3k](https://img.shields.io/badge/⭐-13.3k-blue)](https://github.com/obra/superpowers) | 14 | MIT |
+| [![Superpowers](https://github.githubassets.com/favicons/favicon.svg) Superpowers](https://github.com/obra/superpowers) | [![13k](https://img.shields.io/badge/⭐-13k-blue)](https://github.com/obra/superpowers) | 14 | MIT |
 | [![ClaudeKit](https://github.githubassets.com/favicons/favicon.svg) ClaudeKit](https://github.com/mrgoonie/claudekit-skills) | [![1.1k](https://img.shields.io/badge/⭐-1.1k-blue)](https://github.com/mrgoonie/claudekit-skills) | 39 | MIT |
 | [![Deep Research](https://github.githubassets.com/favicons/favicon.svg) Deep Research](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) | [![55](https://img.shields.io/badge/⭐-55-blue)](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) | 5 | - |
+| [![superpowers-marketplace](https://github.githubassets.com/favicons/favicon.svg) superpowers-marketplace](https://github.com/obra/superpowers-marketplace) | [![51 forks](https://img.shields.io/badge/forks-51-blue)](https://github.com/obra/superpowers-marketplace) | TBD | MIT |
+| [![superpowers-lab](https://github.githubassets.com/favicons/favicon.svg) superpowers-lab](https://github.com/obra/superpowers-lab) | [![7 forks](https://img.shields.io/badge/forks-7-blue)](https://github.com/obra/superpowers-lab) | TBD | MIT |
+| [![ComposioHQ](https://github.githubassets.com/favicons/favicon.svg) ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | TBD | TBD | MIT |
 
 ---
 
@@ -167,7 +171,7 @@ Skills Controller 分析意图
 
 目前支持 **58+ 技能**，全部来自以下 GitHub 高星开源项目:
 
-#### 从 Superpowers (⭐ 13.3k)
+#### 从 Superpowers (⭐ 13k)
 > [https://github.com/obra/superpowers](https://github.com/obra/superpowers)
 
 `brainstorming` • `dispatching-parallel-agents` • `executing-plans` • `finishing-a-development-branch` • `receiving-code-review` 等 14 个核心开发技能
@@ -188,6 +192,27 @@ Skills Controller 分析意图
 - 📚 **引用验证系统**：A-E 质量评级，确保每个声明都有可验证来源
 - ✨ **完整研究流程**：从问题精炼到最终报告生成的 7 阶段方法
 - 🎯 **依赖 Exa MCP**：需要配置 Exa AI MCP 服务器以使用网络搜索功能
+
+#### 从 obra/superpowers-marketplace - 新增
+> [https://github.com/obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace)
+
+官方技能市场，提供社区贡献的技能
+
+#### 从 obra/superpowers-lab - 新增
+> [https://github.com/obra/superpowers-lab](https://github.com/obra/superpowers-lab)
+
+实验性技能，包含最新的技能原型
+
+#### 从 ComposioHQ/awesome-claude-skills - 新增
+> [https://github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)
+
+Composio 团队维护的精选技能列表
+
+---
+
+**技能市场参考资源：**
+- [skillsmp.com](https://skillsmp.com) - Anthropic 官方推荐平台（38,216+ 技能）
+- [claudemarketplaces.com](https://claudemarketplaces.com) - 技能展示目录网站
 
 ---
 
@@ -327,8 +352,11 @@ license: MIT
 | 项目 | 作者 | 链接 |
 |------|------|------|
 | **superpowers** | [obra](https://github.com/obra) | [github.com/obra/superpowers](https://github.com/obra/superpowers) |
+| **superpowers-marketplace** | [obra](https://github.com/obra) | [github.com/obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace) |
+| **superpowers-lab** | [obra](https://github.com/obra) | [github.com/obra/superpowers-lab](https://github.com/obra/superpowers-lab) |
 | **claudekit-skills** | [mrgoonie](https://github.com/mrgoonie) | [github.com/mrgoonie/claudekit-skills](https://github.com/mrgoonie/claudekit-skills) |
 | **Claude-Code-Deep-Research-main** | [liangdabiao](https://github.com/liangdabiao) | [github.com/liangdabiao/Claude-Code-Deep-Research-main](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) |
+| **awesome-claude-skills** | [ComposioHQ](https://github.com/ComposioHQ) | [github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) |
 
 **特别说明**:本项目仅为技能聚合和智能路由工具,所有技能的版权归各自原作者所有。
 
