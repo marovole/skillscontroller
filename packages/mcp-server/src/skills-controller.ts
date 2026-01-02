@@ -1177,7 +1177,8 @@ async function scanSkillsDirectory(baseDir: string, maxDepth: number = 2): Promi
       const entries = fs.readdirSync(dir, { withFileTypes: true });
 
       for (const entry of entries) {
-        if (!entry.isDirectory()) continue;
+        // Skip non-directories and non-symlinks
+        if (!entry.isDirectory() && !entry.isSymbolicLink()) continue;
         if (entry.name.startsWith(".")) continue;
         if (entry.name === "common" || entry.name === "references" || entry.name === "scripts") continue;
 
@@ -1191,21 +1192,35 @@ async function scanSkillsDirectory(baseDir: string, maxDepth: number = 2): Promi
           // Validate path stays within base directory
           const skillDir = validatePath(resolvedBase, path.relative(resolvedBase, path.join(dir, entry.name)));
 
-          // Check for symlink escape
+          // Check for symlink - resolve and validate target
           const dirStats = fs.lstatSync(skillDir);
+          let finalSkillDir = skillDir;
           if (dirStats.isSymbolicLink()) {
-            console.error(`[Skills Controller] 跳过符号链接: ${sanitizePathForLog(entry.name)}`);
-            continue;
+            try {
+              // Resolve symlink to real path
+              const realPath = fs.realpathSync(skillDir);
+              // Verify symlink target exists and is a directory
+              const realStats = fs.statSync(realPath);
+              if (!realStats.isDirectory()) {
+                console.error(`[Skills Controller] 跳过符号链接(目标非目录): ${sanitizePathForLog(entry.name)}`);
+                continue;
+              }
+              // Use the real path for further processing
+              finalSkillDir = realPath;
+            } catch (error) {
+              console.error(`[Skills Controller] 跳过无效符号链接: ${sanitizePathForLog(entry.name)}`);
+              continue;
+            }
           }
 
-          const skillFile = path.join(skillDir, "SKILL.md");
+          const skillFile = path.join(finalSkillDir, "SKILL.md");
 
           if (fs.existsSync(skillFile)) {
             // 找到技能，处理它
             processSkill(entry.name, skillFile);
           } else {
             // 没有 SKILL.md，尝试递归扫描子目录
-            scanDir(skillDir, depth + 1);
+            scanDir(finalSkillDir, depth + 1);
           }
         } catch (error) {
           if (error instanceof PathTraversalError) {
