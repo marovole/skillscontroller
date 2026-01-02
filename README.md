@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![MCP](https://img.shields.io/badge/MCP-1.0-purple)](https://modelcontextprotocol.io/)
-[![Skills](https://img.shields.io/badge/Skills-60+-green)](#技能来源)
+[![Skills](https://img.shields.io/badge/Skills-65+-green)](#技能来源)
 
 ---
 
@@ -18,6 +18,7 @@
 | [![Anthropic](https://github.githubassets.com/favicons/favicon.svg) Anthropic 官方](https://github.com/anthropics/anthropic-quickstarts) | [![30.7k](https://img.shields.io/badge/⭐-30.7k-blue)](https://github.com/anthropics/anthropic-quickstarts) | 16 | MIT |
 | [![ClaudeKit](https://github.githubassets.com/favicons/favicon.svg) ClaudeKit](https://github.com/jorgeboman/claudekit-skills) | [![1k](https://img.shields.io/badge/⭐-1k-blue)](https://github.com/jorgeboman/claudekit-skills) | 29 | MIT |
 | [![awesome-claude-skills](https://github.githubassets.com/favicons/favicon.svg) awesome-claude-skills](https://github.com/yutongyang/awesome-claude-skills) | [![3.9k](https://img.shields.io/badge/⭐-3.9k-blue)](https://github.com/yutongyang/awesome-claude-skills) | 15 | MIT |
+| [![Deep Research](https://github.githubassets.com/favicons/favicon.svg) Deep Research](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) | [![55](https://img.shields.io/badge/⭐-55-blue)](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) | 5 | - |
 
 ---
 
@@ -165,7 +166,7 @@ Skills Controller 分析意图
 
 ### 3. 技能库
 
-目前支持 **60+ 技能**，全部来自以下 GitHub 高星开源项目：
+目前支持 **65+ 技能**，全部来自以下 GitHub 高星开源项目：
 
 #### 从 Anthropic 官方技能库 (⭐ 30.7k)
 > [https://github.com/anthropics/anthropic-quickstarts](https://github.com/anthropics/anthropic-quickstarts)
@@ -181,6 +182,18 @@ Skills Controller 分析意图
 > [https://github.com/yutongyang/awesome-claude-skills](https://github.com/yutongyang/awesome-claude-skills)
 
 `video-downloader` • `image-enhancer` • `changelog-generator` 等 15 个技能
+
+#### 从 Deep Research (⭐ 55)
+> [https://github.com/liangdabiao/Claude-Code-Deep-Research-main](https://github.com/liangdabiao/Claude-Code-Deep-Research-main)
+
+`question-refiner` • `research-executor` • `got-controller` • `citation-validator` • `synthesizer` 等 5 个深度研究技能
+
+**Deep Research 技能特点**：
+- 🔍 **多智能体并行研究**：部署 3-8 个智能体同时研究不同子主题
+- 📊 **Graph of Thoughts 框架**：使用 GoT 优化研究路径和质量
+- 📚 **引用验证系统**：A-E 质量评级，确保每个声明都有可验证来源
+- ✨ **完整研究流程**：从问题精炼到最终报告生成的 7 阶段方法
+- 🎯 **依赖 Exa MCP**：需要配置 Exa AI MCP 服务器以使用网络搜索功能
 
 ---
 
@@ -219,6 +232,34 @@ Claude 会自动：
 2. 激活 frontend-design 技能
 3. 根据技能指令生成代码
 4. 完成后自动停用技能
+```
+
+### 深度研究示例
+
+使用 Deep Research 技能进行全面的研究：
+
+```
+用户: 帮我研究 AI 在医疗诊断中的应用
+
+Claude 会自动：
+1. 调用 question-refiner 精炼研究问题
+2. 激活 research-executor 部署多个研究智能体
+3. 使用 Exa MCP 工具进行网络搜索和内容爬取
+4. 调用 synthesizer 综合研究发现
+5. 使用 citation-validator 验证所有引用
+6. 生成包含引用的完整研究报告
+```
+
+或者使用斜杠命令：
+
+```bash
+/deep-research AI applications in clinical diagnosis
+
+# 或分步执行
+/refine-question What are the latest AI applications in healthcare?
+/plan-research [精炼后的研究提示]
+/synthesize-findings RESEARCH/ai-healthcare/research_notes/
+/validate-citations RESEARCH/ai-healthcare/full_report.md
 ```
 
 ### CLI 工具

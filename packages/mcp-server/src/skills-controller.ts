@@ -107,6 +107,7 @@ const DEFAULT_SKILLS_DIRS = [
   path.join(packageRoot, "anthropic-skills", "skills"),
   path.join(packageRoot, "claudekit-skills", ".claude", "skills"),
   path.join(packageRoot, "awesome-claude-skills"),
+  path.join(packageRoot, "deep-research-skills", ".claude", "skills"), // Deep Research 技能
 ];
 
 // Validate and filter skills directories
@@ -380,6 +381,28 @@ const EXTRA_TRIGGERS: Record<string, { zh?: string[]; en?: string[] }> = {
   "competitive-ads-extractor": {
     zh: ["广告", "竞品"],
     en: ["ads", "advertisement", "competitor"],
+  },
+
+  // === Deep Research 技能 ===
+  "question-refiner": {
+    zh: ["问题精炼", "精炼问题", "澄清研究", "研究问题", "提炼问题"],
+    en: ["question refiner", "refine question", "clarify research", "research question", "question clarification"],
+  },
+  "research-executor": {
+    zh: ["深度研究", "研究执行", "多智能体研究", "并行研究", "研究报告", "学术研究"],
+    en: ["deep research", "research executor", "multi-agent research", "parallel research", "research report", "academic research"],
+  },
+  "got-controller": {
+    zh: ["思维图", "Graph of Thoughts", "研究优化", "GoT", "图操作"],
+    en: ["graph of thoughts", "got", "thought graph", "research optimization", "graph operations"],
+  },
+  "citation-validator": {
+    zh: ["引用验证", "来源质量", "引用完整性", "文献验证", "引用检查"],
+    en: ["citation validator", "source quality", "citation integrity", "reference validation", "citation check"],
+  },
+  "synthesizer": {
+    zh: ["研究综合", "报告生成", "发现总结", "综合报告", "研究汇总"],
+    en: ["research synthesizer", "report generation", "findings summary", "synthesis report", "research compilation"],
   },
 };
 
@@ -977,6 +1000,68 @@ const SKILL_CONFIGS: Record<string, SkillTriggerConfig> = {
   },
   "claude-code": {
     priority: 4,
+  },
+
+  // === Deep Research 技能配置 ===
+  "question-refiner": {
+    triggers: [
+      { word: "问题精炼", weight: 5 },
+      { word: "精炼问题", weight: 5 },
+      { word: "研究问题", weight: 4 },
+      { word: "question refiner", weight: 5 },
+      { word: "refine question", weight: 5 },
+      { word: "clarify research", weight: 4 },
+    ],
+    requiredIntents: [IntentType.RESEARCH, IntentType.CREATE],
+    priority: 7,
+  },
+  "research-executor": {
+    triggers: [
+      { word: "深度研究", weight: 6 },
+      { word: "研究执行", weight: 5 },
+      { word: "多智能体研究", weight: 6 },
+      { word: "研究报告", weight: 4 },
+      { word: "deep research", weight: 6 },
+      { word: "research executor", weight: 5 },
+      { word: "multi-agent research", weight: 6 },
+    ],
+    requiredIntents: [IntentType.RESEARCH],
+    priority: 8,
+  },
+  "got-controller": {
+    triggers: [
+      { word: "思维图", weight: 6 },
+      { word: "Graph of Thoughts", weight: 6 },
+      { word: "GoT", weight: 5 },
+      { word: "graph of thoughts", weight: 6 },
+      { word: "thought graph", weight: 5 },
+    ],
+    requiredIntents: [IntentType.RESEARCH, IntentType.ANALYZE],
+    priority: 7,
+  },
+  "citation-validator": {
+    triggers: [
+      { word: "引用验证", weight: 6 },
+      { word: "来源质量", weight: 5 },
+      { word: "文献验证", weight: 5 },
+      { word: "citation validator", weight: 6 },
+      { word: "source quality", weight: 5 },
+      { word: "reference validation", weight: 5 },
+    ],
+    requiredIntents: [IntentType.DOCUMENT, IntentType.ANALYZE],
+    priority: 7,
+  },
+  "synthesizer": {
+    triggers: [
+      { word: "研究综合", weight: 6 },
+      { word: "报告生成", weight: 5 },
+      { word: "综合报告", weight: 5 },
+      { word: "research synthesizer", weight: 6 },
+      { word: "report generation", weight: 5 },
+      { word: "synthesis report", weight: 5 },
+    ],
+    requiredIntents: [IntentType.DOCUMENT, IntentType.CREATE, IntentType.RESEARCH],
+    priority: 7,
   },
 };
 
