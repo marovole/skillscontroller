@@ -1,0 +1,3 @@
+name = "skillscontroller"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "./packages/website/dist"

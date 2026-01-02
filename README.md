@@ -2,6 +2,7 @@
 
 > 智能技能编排控制器 - 集成 GitHub 高星开源项目，为 Claude Code 提供专家级技能
 
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![MCP](https://img.shields.io/badge/MCP-1.0-purple)](https://modelcontextprotocol.io/)
@@ -16,8 +17,12 @@
 | 项目 | Stars | 技能数 | 许可证 |
 |:---:|:---:|:---:|:---:|
 | [![Anthropic](https://github.githubassets.com/favicons/favicon.svg) Anthropic 官方](https://github.com/anthropics/anthropic-quickstarts) | [![30.7k](https://img.shields.io/badge/⭐-30.7k-blue)](https://github.com/anthropics/anthropic-quickstarts) | 16 | MIT |
+| [![superpowers](https://github.githubassets.com/favicons/favicon.svg) obra/superpowers](https://github.com/obra/superpowers) | [![13k](https://img.shields.io/badge/⭐-13k-blue)](https://github.com/obra/superpowers) | TBD | MIT |
 | [![ClaudeKit](https://github.githubassets.com/favicons/favicon.svg) ClaudeKit](https://github.com/jorgeboman/claudekit-skills) | [![1k](https://img.shields.io/badge/⭐-1k-blue)](https://github.com/jorgeboman/claudekit-skills) | 29 | MIT |
 | [![awesome-claude-skills](https://github.githubassets.com/favicons/favicon.svg) awesome-claude-skills](https://github.com/yutongyang/awesome-claude-skills) | [![3.9k](https://img.shields.io/badge/⭐-3.9k-blue)](https://github.com/yutongyang/awesome-claude-skills) | 15 | MIT |
+| [![superpowers-marketplace](https://github.githubassets.com/favicons/favicon.svg) superpowers-marketplace](https://github.com/obra/superpowers-marketplace) | [![51 forks](https://img.shields.io/badge/forks-51-blue)](https://github.com/obra/superpowers-marketplace) | TBD | MIT |
+| [![superpowers-lab](https://github.githubassets.com/favicons/favicon.svg) superpowers-lab](https://github.com/obra/superpowers-lab) | [![7 forks](https://img.shields.io/badge/forks-7-blue)](https://github.com/obra/superpowers-lab) | TBD | MIT |
+| [![ComposioHQ](https://github.githubassets.com/favicons/favicon.svg) ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) | TBD | TBD | MIT |
 
 ---
 
@@ -172,6 +177,11 @@ Skills Controller 分析意图
 
 `docx` • `pdf` • `pptx` • `xlsx` • `frontend-design` • `algorithmic-art` 等 16 个技能
 
+#### 从 obra/superpowers (⭐ 13k+) - 新增
+> [https://github.com/obra/superpowers](https://github.com/obra/superpowers)
+
+官方核心技能库，包含高质量的 Claude 技能
+
 #### 从 ClaudeKit (⭐ 1k)
 > [https://github.com/jorgeboman/claudekit-skills](https://github.com/jorgeboman/claudekit-skills)
 
@@ -181,6 +191,27 @@ Skills Controller 分析意图
 > [https://github.com/yutongyang/awesome-claude-skills](https://github.com/yutongyang/awesome-claude-skills)
 
 `video-downloader` • `image-enhancer` • `changelog-generator` 等 15 个技能
+
+#### 从 obra/superpowers-marketplace - 新增
+> [https://github.com/obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace)
+
+官方技能市场，提供社区贡献的技能
+
+#### 从 obra/superpowers-lab - 新增
+> [https://github.com/obra/superpowers-lab](https://github.com/obra/superpowers-lab)
+
+实验性技能，包含最新的技能原型
+
+#### 从 ComposioHQ/awesome-claude-skills - 新增
+> [https://github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills)
+
+Composio 团队维护的精选技能列表
+
+---
+
+**技能市场参考资源：**
+- [skillsmp.com](https://skillsmp.com) - Anthropic 官方推荐平台（38,216+ 技能）
+- [claudemarketplaces.com](https://claudemarketplaces.com) - 技能展示目录网站
 
 ---
 
@@ -295,8 +326,12 @@ license: MIT
 | 项目 | 作者 | 链接 |
 |------|------|------|
 | **anthropic-quickstarts** | [Anthropic](https://github.com/anthropics) | [github.com/anthropics/anthropic-quickstarts](https://github.com/anthropics/anthropic-quickstarts) |
+| **superpowers** | [obra](https://github.com/obra) | [github.com/obra/superpowers](https://github.com/obra/superpowers) |
+| **superpowers-marketplace** | [obra](https://github.com/obra) | [github.com/obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace) |
+| **superpowers-lab** | [obra](https://github.com/obra) | [github.com/obra/superpowers-lab](https://github.com/obra/superpowers-lab) |
 | **claudekit-skills** | [jorgeboman](https://github.com/jorgeboman) | [github.com/jorgeboman/claudekit-skills](https://github.com/jorgeboman/claudekit-skills) |
 | **awesome-claude-skills** | [yutongyang](https://github.com/yutongyang) | [github.com/yutongyang/awesome-claude-skills](https://github.com/yutongyang/awesome-claude-skills) |
+| **awesome-claude-skills** | [ComposioHQ](https://github.com/ComposioHQ) | [github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) |
 
 **特别说明**：本项目仅为技能聚合和智能路由工具，所有技能的版权归各自原作者所有。
 
