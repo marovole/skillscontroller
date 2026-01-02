@@ -43,13 +43,14 @@ var IntentType;
 // 优先级：用户本地 > Anthropic 官方 > ClaudeKit > 社区
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const packageRoot = path.resolve(__dirname, "..");
+// In compiled code: __dirname = packages/mcp-server/dist
+// packageRoot should point to project root (../../..)
+const packageRoot = path.resolve(__dirname, "..", "..", "..");
 const DEFAULT_SKILLS_DIRS = [
-    path.join(process.env.HOME || "", ".claude", "skills"), // 用户本地技能（最高优先级）
-    path.join(packageRoot, "anthropic-skills", "skills"),
-    path.join(packageRoot, "claudekit-skills", ".claude", "skills"),
-    path.join(packageRoot, "awesome-claude-skills"),
-    path.join(packageRoot, "deep-research-skills", ".claude", "skills"), // Deep Research 技能
+    path.join(process.env.HOME || "", ".claude", "skills"), // 用户本地技能(最高优先级)
+    path.join(packageRoot, "superpowers", "skills"), // Superpowers 核心技能库 (⭐13k)
+    path.join(packageRoot, "claudekit-skills", ".claude", "skills"), // ClaudeKit 技能 (⭐1.1k)
+    path.join(packageRoot, "deep-research-skills", ".claude", "skills"), // Deep Research 技能 (⭐55)
 ];
 // Validate and filter skills directories
 const rawSkillsDirs = process.env.SKILLS_DIR
