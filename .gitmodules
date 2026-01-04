@@ -7,3 +7,6 @@
 [submodule "superpowers"]
 	path = superpowers
 	url = https://github.com/obra/superpowers.git
+[submodule "scientific-skills"]
+	path = scientific-skills
+	url = https://github.com/K-Dense-AI/claude-scientific-skills.git

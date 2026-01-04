@@ -100,6 +100,7 @@ const DEFAULT_SKILLS_DIRS = [
   path.join(process.cwd(), "anthropic-skills", "skills"),
   path.join(process.cwd(), "claudekit-skills", ".claude", "skills"),
   path.join(process.cwd(), "awesome-claude-skills"),
+  path.join(process.cwd(), "scientific-skills", "scientific-skills"),  // K-Dense AI 科学技能库 (138+ skills)
 ];
 
 // Validate and filter skills directories

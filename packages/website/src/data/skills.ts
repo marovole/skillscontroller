@@ -5,7 +5,7 @@ export interface Skill {
   name: string;
   description: string;
   category: Category;
-  source: 'anthropic' | 'claudekit' | 'community' | 'composio' | 'voltagent';
+  source: 'anthropic' | 'claudekit' | 'scientific' | 'community' | 'composio' | 'voltagent';
   triggers: string[];
   priority: number;
   content: string;
@@ -451,6 +451,148 @@ description: |
 - 数据抓取
 - 截图和 PDF
 - 表单填写
+`
+  },
+
+  // Scientific Skills (示例 - 实际包含 138 个技能)
+  {
+    id: 'biopython',
+    name: 'BioPython',
+    description: '生物序列分析、基因组学、蛋白质结构分析',
+    category: categories[4],
+    source: 'scientific',
+    triggers: ['生物', '基因', 'DNA', 'RNA', '蛋白质', '序列分析', 'BioPython'],
+    priority: 7,
+    content: `---
+name: biopython
+description: |
+  BioPython 生物信息学分析专家。
+  处理生物序列、基因组数据、蛋白质结构。
+---
+
+# BioPython
+
+专业的生物信息学分析工具。
+
+## 核心功能
+
+- DNA/RNA 序列分析
+- 蛋白质结构预测
+- 系统发育树构建
+- BLAST 搜索
+- GenBank 数据处理
+`
+  },
+  {
+    id: 'rdkit',
+    name: 'RDKit',
+    description: '化学信息学、分子操作、药物发现',
+    category: categories[4],
+    source: 'scientific',
+    triggers: ['化学', '分子', '药物', '化合物', 'RDKit', 'SMILES'],
+    priority: 7,
+    content: `---
+name: rdkit
+description: |
+  RDKit 化学信息学专家。
+  分子结构分析、药物性质预测、虚拟筛选。
+---
+
+# RDKit
+
+化学信息学和药物发现工具。
+
+## 主要能力
+
+- 分子结构操作
+- 化学性质计算
+- 分子指纹生成
+- 子结构搜索
+- 3D 分子构象
+`
+  },
+  {
+    id: 'scanpy',
+    name: 'Scanpy',
+    description: '单细胞 RNA 测序分析、细胞类型鉴定',
+    category: categories[4],
+    source: 'scientific',
+    triggers: ['单细胞', 'scRNA-seq', 'Scanpy', '细胞', '基因表达'],
+    priority: 7,
+    content: `---
+name: scanpy
+description: |
+  Scanpy 单细胞分析专家。
+  处理和分析单细胞 RNA-seq 数据。
+---
+
+# Scanpy
+
+单细胞 RNA 测序数据分析。
+
+## 分析流程
+
+- 质量控制和过滤
+- 归一化和批次矫正
+- 降维和聚类
+- 差异表达分析
+- 细胞类型注释
+`
+  },
+  {
+    id: 'deepchem',
+    name: 'DeepChem',
+    description: '深度学习药物发现、分子性质预测',
+    category: categories[4],
+    source: 'scientific',
+    triggers: ['深度学习', '药物发现', 'DeepChem', 'AI药物', '分子预测'],
+    priority: 7,
+    content: `---
+name: deepchem
+description: |
+  DeepChem 深度学习药物发现专家。
+  使用 AI 预测分子性质和生物活性。
+---
+
+# DeepChem
+
+AI 驱动的药物发现平台。
+
+## 核心功能
+
+- 分子性质预测
+- ADMET 预测
+- 蛋白-配体结合预测
+- 图神经网络模型
+- 虚拟筛选
+`
+  },
+  {
+    id: 'pubmed',
+    name: 'PubMed',
+    description: '生物医学文献搜索和分析',
+    category: categories[4],
+    source: 'scientific',
+    triggers: ['文献', 'PubMed', '论文', '生物医学', '科研'],
+    priority: 6,
+    content: `---
+name: pubmed
+description: |
+  PubMed 文献检索专家。
+  搜索和分析生物医学文献。
+---
+
+# PubMed
+
+生物医学文献数据库访问。
+
+## 功能特性
+
+- 关键词搜索
+- 高级查询构建
+- 文献元数据提取
+- 引用分析
+- 相关文献推荐
 `
   }
 ];

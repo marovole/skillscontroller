@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![MCP](https://img.shields.io/badge/MCP-1.0-purple)](https://modelcontextprotocol.io/)
-[![Skills](https://img.shields.io/badge/Skills-58+-green)](#技能来源)
+[![Skills](https://img.shields.io/badge/Skills-196+-green)](#技能来源)
 
 ---
 
@@ -18,6 +18,7 @@
 |:---:|:---:|:---:|:---:|
 | [![Superpowers](https://github.githubassets.com/favicons/favicon.svg) Superpowers](https://github.com/obra/superpowers) | [![13k](https://img.shields.io/badge/⭐-13k-blue)](https://github.com/obra/superpowers) | 14 | MIT |
 | [![ClaudeKit](https://github.githubassets.com/favicons/favicon.svg) ClaudeKit](https://github.com/mrgoonie/claudekit-skills) | [![1.1k](https://img.shields.io/badge/⭐-1.1k-blue)](https://github.com/mrgoonie/claudekit-skills) | 39 | MIT |
+| [![Scientific Skills](https://github.githubassets.com/favicons/favicon.svg) Scientific Skills](https://github.com/K-Dense-AI/claude-scientific-skills) | [![2.9k](https://img.shields.io/badge/⭐-2.9k-blue)](https://github.com/K-Dense-AI/claude-scientific-skills) | 138 | MIT |
 | [![Deep Research](https://github.githubassets.com/favicons/favicon.svg) Deep Research](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) | [![55](https://img.shields.io/badge/⭐-55-blue)](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) | 5 | - |
 | [![superpowers-marketplace](https://github.githubassets.com/favicons/favicon.svg) superpowers-marketplace](https://github.com/obra/superpowers-marketplace) | [![51 forks](https://img.shields.io/badge/forks-51-blue)](https://github.com/obra/superpowers-marketplace) | TBD | MIT |
 | [![superpowers-lab](https://github.githubassets.com/favicons/favicon.svg) superpowers-lab](https://github.com/obra/superpowers-lab) | [![7 forks](https://img.shields.io/badge/forks-7-blue)](https://github.com/obra/superpowers-lab) | TBD | MIT |
@@ -169,7 +170,7 @@ Skills Controller 分析意图
 
 ### 3. 技能库
 
-目前支持 **58+ 技能**，全部来自以下 GitHub 高星开源项目:
+目前支持 **196+ 技能**，全部来自以下 GitHub 高星开源项目:
 
 #### 从 Superpowers (⭐ 13k)
 > [https://github.com/obra/superpowers](https://github.com/obra/superpowers)
@@ -180,6 +181,32 @@ Skills Controller 分析意图
 > [https://github.com/mrgoonie/claudekit-skills](https://github.com/mrgoonie/claudekit-skills)
 
 `databases` • `devops` • `sequential-thinking` • `chrome-devtools` • `when-stuck` 等 39 个全能技能
+
+#### 从 Scientific Skills (⭐ 2.9k) - 新增
+> [https://github.com/K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills)
+
+**138 个专业科学技能**，涵盖多个科学领域：
+
+- 🧬 **生物信息学 & 基因组学** (16+)：BioPython、Scanpy、单细胞分析、基因调控网络
+- 🧪 **化学信息学 & 药物发现** (10+)：RDKit、DeepChem、分子对接、虚拟筛选
+- 🔬 **蛋白质组学 & 质谱** (2)：pyOpenMS、肽段鉴定、蛋白定量
+- 🏥 **临床研究 & 精准医疗** (12+)：ClinicalTrials.gov、ClinVar、药物基因组学
+- 🖼️ **医学影像 & 数字病理** (3)：DICOM、全切片成像、计算病理学
+- 🤖 **机器学习 & AI** (15+)：PyTorch Lightning、Transformers、图神经网络
+- 🔮 **材料科学 & 化学** (7)：Pymatgen、量子计算、代谢建模
+- 📊 **数据分析 & 可视化** (14+)：科学可视化、网络分析、统计建模
+- 🧪 **实验室自动化** (3)：液体处理、LIMS 集成、协议管理
+- 📚 **科学交流** (20+)：文献综述、科学写作、同行评审、引用管理
+- 🔬 **多组学 & 系统生物学** (5+)：通路分析、多组学整合、网络生物学
+- 🧬 **蛋白质工程 & 设计** (2)：蛋白质语言模型、结构预测
+- 🎓 **研究方法** (8+)：假设生成、科学批判性思维、研究资助
+
+**Scientific Skills 特点**：
+- 🔬 **学术级工具**：集成 28+ 科学数据库（PubMed、ChEMBL、UniProt 等）
+- 🐍 **55+ Python 包**：深度整合专业科学计算包
+- 📈 **端到端工作流**：从数据获取到分析、可视化、发表的完整流程
+- 🌐 **跨学科整合**：支持多组学、系统生物学等交叉研究
+- 📖 **详尽文档**：每个技能包含完整文档、代码示例、最佳实践
 
 #### 从 Deep Research (⭐ 55)
 > [https://github.com/liangdabiao/Claude-Code-Deep-Research-main](https://github.com/liangdabiao/Claude-Code-Deep-Research-main)
@@ -226,6 +253,7 @@ skillscontroller/
 │   └── website/                 # 项目网站
 ├── superpowers/                 # Superpowers 核心技能库 (⭐13.3k)
 ├── claudekit-skills/            # ClaudeKit 全能技能 (⭐1.1k)
+├── scientific-skills/           # Scientific Skills 科学技能库 (⭐2.9k, 138 skills)
 ├── deep-research-skills/        # Deep Research 研究技能 (⭐55)
 ├── package.json
 ├── pnpm-workspace.yaml
@@ -355,6 +383,7 @@ license: MIT
 | **superpowers-marketplace** | [obra](https://github.com/obra) | [github.com/obra/superpowers-marketplace](https://github.com/obra/superpowers-marketplace) |
 | **superpowers-lab** | [obra](https://github.com/obra) | [github.com/obra/superpowers-lab](https://github.com/obra/superpowers-lab) |
 | **claudekit-skills** | [mrgoonie](https://github.com/mrgoonie) | [github.com/mrgoonie/claudekit-skills](https://github.com/mrgoonie/claudekit-skills) |
+| **claude-scientific-skills** | [K-Dense AI](https://github.com/K-Dense-AI) | [github.com/K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills) |
 | **Claude-Code-Deep-Research-main** | [liangdabiao](https://github.com/liangdabiao) | [github.com/liangdabiao/Claude-Code-Deep-Research-main](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) |
 | **awesome-claude-skills** | [ComposioHQ](https://github.com/ComposioHQ) | [github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) |
 
