@@ -36,6 +36,13 @@ export const categories: Category[] = [
     icon: '🚀'
   },
   {
+    id: 'scientific',
+    name: '科学研究',
+    nameEn: 'Scientific',
+    description: '生物信息学、化学、医学、AI研究',
+    icon: '🔬'
+  },
+  {
     id: 'document',
     name: '文档处理',
     nameEn: 'Documentation',
