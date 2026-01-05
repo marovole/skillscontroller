@@ -1,29 +1,21 @@
 {
-  "name": "skillscontroller-monorepo",
-  "version": "1.0.0",
+  "name": "skillscontroller-website",
+  "version": "2.0.0",
   "private": true,
-  "description": "Skills MCP Controller - Monorepo",
+  "description": "Claude Code Skills Hub - 精选 Claude Code 技能收录与场景化打包平台",
   "scripts": {
-    "build": "pnpm --filter './packages/**' build",
-    "build:shared": "pnpm --filter shared build",
-    "build:mcp": "pnpm build:shared && pnpm --filter mcp-server build",
-    "build:website": "pnpm build:shared && pnpm --filter website build",
-    "pages:build": "pnpm install && pnpm --filter website build",
-    "dev": "pnpm --filter './packages/**' --parallel dev",
-    "dev:mcp": "pnpm --filter mcp-server dev",
-    "dev:website": "pnpm --filter website dev",
-    "test": "pnpm --filter mcp-server test",
-    "test:watch": "pnpm --filter mcp-server test --watch",
-    "typecheck": "pnpm --filter './packages/**' typecheck",
-    "clean": "pnpm --filter './packages/**' clean"
+    "dev": "pnpm --filter website dev",
+    "build": "pnpm --filter website build",
+    "preview": "pnpm --filter website preview",
+    "typecheck": "pnpm --filter website typecheck"
   },
   "keywords": [
     "claude",
     "claude-code",
     "skills",
-    "mcp",
     "ai-tools",
-    "model-context-protocol"
+    "prompt-engineering",
+    "skills-marketplace"
   ],
   "author": "marovole",
   "license": "MIT",
@@ -38,8 +30,5 @@
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
   }
 }
