@@ -12,7 +12,7 @@
 	url = https://github.com/K-Dense-AI/claude-scientific-skills.git
 [submodule "anthropic-skills"]
 	path = anthropic-skills
-	url = https://github.com/anthropics/anthropic-skills.git
+	url = https://github.com/anthropics/skills.git
 [submodule "awesome-claude-skills"]
 	path = awesome-claude-skills
 	url = https://github.com/ComposioHQ/awesome-claude-skills.git
