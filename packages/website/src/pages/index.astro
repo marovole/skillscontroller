@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import InstallCommand from '../components/InstallCommand.astro';
 import CategoryFilter from '../components/CategoryFilter.astro';
 import SkillGrid from '../components/SkillGrid.astro';
+import ScientificPackages from '../components/ScientificPackages.astro';
 import { skills } from '../data/skills';
 import { categories } from '../data/categories';
 import { downloadSingleSkill } from '../utils/downloader';
@@ -42,6 +43,9 @@ import { downloadSkillPack, filterSkillsForPack, skillPacks } from '../utils/pac
   </section>
 
   <InstallCommand />
+
+  <!-- 科学研究技能包展示 -->
+  <ScientificPackages />
 
   <div class="skills-container">
     <div class="container">
