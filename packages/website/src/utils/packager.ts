@@ -1,18 +1,6 @@
 import JSZip from 'jszip';
 import type { Skill } from '../data/skills';
 
-// 子模块技能目录映射（source -> 相对路径）
-const SKILL_SOURCE_PATHS: Record<string, string> = {
-  'anthropic': '../../../anthropic-skills/skills',
-  'scientific': '../../../scientific-skills/skills',
-  'claudekit': '../../../claudekit-skills/.claude/skills',
-  'community': '../../../awesome-claude-skills/skills',
-  'composio': '../../../composio-skills/skills',
-  'voltagent': '../../../voltagent-skills/skills',
-  'obsidian': '../../../obsidian-skills/skills',
-  'planning': '../../../planning-with-files/skills'
-};
-
 export interface SkillForPackage {
   id: string;
   name: string;
@@ -66,24 +54,21 @@ const SKILL_TO_SOURCE: Record<string, { source: string; path: string }> = {
 };
 
 /**
- * 尝试从本地文件读取 SKILL.md 内容
+ * 尝试从本地文件读取 SKILL.md 内容（通过 API 端点）
  */
 async function tryReadSkillFile(skillId: string): Promise<string | null> {
   const skillSource = SKILL_TO_SOURCE[skillId];
   if (!skillSource) return null;
 
-  const basePath = SKILL_SOURCE_PATHS[skillSource.source];
-  if (!basePath) return null;
-
-  const skillPath = `${basePath}/${skillSource.path}/SKILL.md`;
+  const apiUrl = `/api/skill-content?source=${skillSource.source}&path=${skillSource.path}`;
 
   try {
-    const response = await fetch(skillPath);
+    const response = await fetch(apiUrl);
     if (response.ok) {
       return await response.text();
     }
-  } catch {
-    // 跨域或网络错误，忽略
+  } catch (error) {
+    console.warn(`[packager] Failed to fetch SKILL.md for ${skillId}:`, error);
   }
 
   return null;

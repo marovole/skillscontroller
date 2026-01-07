@@ -456,57 +456,57 @@ import { downloadSkillPack, filterSkillsForPack, skillPacks } from '../utils/pac
 
     const zip = new JSZip();
     
-    // 技能到源目录的映射
-    const skillToPath = {
-      'frontend-design': 'anthropic-skills/skills/frontend-design',
-      'modern-frontend-design': 'anthropic-skills/skills/modern-frontend-design',
-      'brand-guidelines': 'anthropic-skills/skills/brand-guidelines',
-      'canvas-design': 'anthropic-skills/skills/canvas-design',
-      'theme-factory': 'anthropic-skills/skills/theme-factory',
-      'pdf': 'anthropic-skills/skills/pdf',
-      'doc-coauthoring': 'anthropic-skills/skills/doc-coauthoring',
-      'docx': 'anthropic-skills/skills/docx',
-      'pptx': 'anthropic-skills/skills/pptx',
-      'xlsx': 'anthropic-skills/skills/xlsx',
-      'algorithmic-art': 'anthropic-skills/skills/algorithmic-art',
-      'slack-gif-creator': 'anthropic-skills/skills/slack-gif-creator',
-      'mcp-builder': 'anthropic-skills/skills/mcp-builder',
-      'skill-creator': 'anthropic-skills/skills/skill-creator',
-      'internal-comms': 'anthropic-skills/skills/internal-comms',
-      'web-artifacts-builder': 'anthropic-skills/skills/web-artifacts-builder',
-      'webapp-testing': 'anthropic-skills/skills/webapp-testing',
-      'backend-development': 'claudekit-skills/.claude/skills/backend-development',
-      'database-design': 'claudekit-skills/.claude/skills/databases',
-      'devops': 'claudekit-skills/.claude/skills/devops',
-      'sequential-thinking': 'claudekit-skills/.claude/skills/sequential-thinking',
-      'code-review': 'claudekit-skills/.claude/skills/code-review',
-      'document-skills': 'claudekit-skills/.claude/skills/document-skills',
-      'react-components': 'claudekit-skills/.claude/skills/react-components',
-      'docker': 'claudekit-skills/.claude/skills/docker',
-      'browser-automation': 'claudekit-skills/.claude/skills/browser-automation',
-      'image-enhancer': 'claudekit-skills/.claude/skills/image-enhancer',
-      'biopython': 'scientific-skills/skills/biopython',
-      'rdkit': 'scientific-skills/skills/rdkit',
-      'scanpy': 'scientific-skills/skills/scanpy',
-      'deepchem': 'scientific-skills/skills/deepchem',
-      'pubmed': 'scientific-skills/skills/pubmed',
-      'obsidian-markdown': 'obsidian-skills/skills/obsidian-markdown',
-      'obsidian-bases': 'obsidian-skills/skills/obsidian-bases',
-      'json-canvas': 'obsidian-skills/skills/json-canvas',
-      'planning-with-files': 'planning-with-files/skills/planning-with-files'
+    // 技能到源目录的映射（使用与 packager.ts 一致的格式）
+    const skillToSource = {
+      'frontend-design': { source: 'anthropic', path: 'frontend-design' },
+      'modern-frontend-design': { source: 'anthropic', path: 'modern-frontend-design' },
+      'brand-guidelines': { source: 'anthropic', path: 'brand-guidelines' },
+      'canvas-design': { source: 'anthropic', path: 'canvas-design' },
+      'theme-factory': { source: 'anthropic', path: 'theme-factory' },
+      'pdf': { source: 'anthropic', path: 'pdf' },
+      'doc-coauthoring': { source: 'anthropic', path: 'doc-coauthoring' },
+      'docx': { source: 'anthropic', path: 'docx' },
+      'pptx': { source: 'anthropic', path: 'pptx' },
+      'xlsx': { source: 'anthropic', path: 'xlsx' },
+      'algorithmic-art': { source: 'anthropic', path: 'algorithmic-art' },
+      'slack-gif-creator': { source: 'anthropic', path: 'slack-gif-creator' },
+      'mcp-builder': { source: 'anthropic', path: 'mcp-builder' },
+      'skill-creator': { source: 'anthropic', path: 'skill-creator' },
+      'internal-comms': { source: 'anthropic', path: 'internal-comms' },
+      'web-artifacts-builder': { source: 'anthropic', path: 'web-artifacts-builder' },
+      'webapp-testing': { source: 'anthropic', path: 'webapp-testing' },
+      'backend-development': { source: 'claudekit', path: 'backend-development' },
+      'database-design': { source: 'claudekit', path: 'databases' },
+      'devops': { source: 'claudekit', path: 'devops' },
+      'sequential-thinking': { source: 'claudekit', path: 'sequential-thinking' },
+      'code-review': { source: 'claudekit', path: 'code-review' },
+      'document-skills': { source: 'claudekit', path: 'document-skills' },
+      'react-components': { source: 'community', path: 'react-components' },
+      'docker': { source: 'community', path: 'docker' },
+      'browser-automation': { source: 'community', path: 'browser-automation' },
+      'image-enhancer': { source: 'community', path: 'image-enhancer' },
+      'biopython': { source: 'scientific', path: 'biopython' },
+      'rdkit': { source: 'scientific', path: 'rdkit' },
+      'scanpy': { source: 'scientific', path: 'scanpy' },
+      'deepchem': { source: 'scientific', path: 'deepchem' },
+      'pubmed': { source: 'scientific', path: 'pubmed' },
+      'obsidian-markdown': { source: 'obsidian', path: 'obsidian-markdown' },
+      'obsidian-bases': { source: 'obsidian', path: 'obsidian-bases' },
+      'json-canvas': { source: 'obsidian', path: 'json-canvas' },
+      'planning-with-files': { source: 'planning', path: 'planning-with-files' }
     };
 
-    // 获取技能内容（优先从文件读取，否则使用现有内容）
+    // 获取技能内容（优先从 API 读取，否则使用现有内容）
     async function getSkillContent(skill) {
-      const skillPath = skillToPath[skill.id];
-      if (skillPath) {
+      const sourceInfo = skillToSource[skill.id];
+      if (sourceInfo) {
         try {
-          const response = await fetch(`${skillPath}/SKILL.md`);
+          const response = await fetch(`/api/skill-content?source=${sourceInfo.source}&path=${sourceInfo.path}`);
           if (response.ok) {
             return await response.text();
           }
-        } catch {
-          // 忽略跨域错误
+        } catch (error) {
+          console.warn(`[index] Failed to fetch SKILL.md for ${skill.id}:`, error);
         }
       }
       return skill.content;
