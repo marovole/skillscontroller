@@ -1,0 +1,355 @@
+---
+import { getScientificPackages } from '../data/packages';
+
+const scientificPackages = getScientificPackages();
+
+// 分组：推荐的和其他的
+const recommendedPackages = scientificPackages.filter(pkg => pkg.recommended);
+const otherPackages = scientificPackages.filter(pkg => !pkg.recommended);
+---
+
+<section id="scientific-packages" class="scientific-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">科学研究技能包</h2>
+      <p class="section-subtitle">138+ 个专业科学技能，覆盖 9 大学科领域</p>
+    </div>
+
+    <!-- 推荐套件 -->
+    <div class="packages-group">
+      <h3 class="group-title">热门推荐</h3>
+      <div class="packages-grid recommended">
+        {recommendedPackages.map(pkg => (
+          <div class="package-card recommended" data-package-id={pkg.id}>
+            <div class="package-icon">{pkg.icon}</div>
+            <div class="package-content">
+              <h4 class="package-name">{pkg.name}</h4>
+              <p class="package-description">{pkg.description}</p>
+              <div class="package-meta">
+                <span class="skill-count">{pkg.skills.length} 个技能</span>
+              </div>
+            </div>
+            <button class="btn-download-pack" data-pack-id={pkg.id}>
+              下载
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- 其他套件 -->
+    <div class="packages-group">
+      <h3 class="group-title">全部科学套件</h3>
+      <div class="packages-grid">
+        {otherPackages.map(pkg => (
+          <div class="package-card" data-package-id={pkg.id}>
+            <div class="package-icon">{pkg.icon}</div>
+            <div class="package-content">
+              <h4 class="package-name">{pkg.name}</h4>
+              <p class="package-description">{pkg.description}</p>
+              <div class="package-meta">
+                <span class="skill-count">{pkg.skills.length} 个技能</span>
+              </div>
+            </div>
+            <button class="btn-download-pack" data-pack-id={pkg.id}>
+              下载
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- 学科分类导航 -->
+    <div class="categories-nav">
+      <h3 class="group-title">按学科浏览</h3>
+      <div class="category-chips">
+        <a href="#" class="category-chip" data-category="bioinformatics">
+          <span class="chip-icon">🧬</span>
+          <span class="chip-name">生物信息学</span>
+          <span class="chip-count">16+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="cheminformatics">
+          <span class="chip-icon">🧪</span>
+          <span class="chip-name">化学信息学</span>
+          <span class="chip-count">10+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="clinical">
+          <span class="chip-icon">🏥</span>
+          <span class="chip-name">临床医学</span>
+          <span class="chip-count">12+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="ml-ai">
+          <span class="chip-icon">🤖</span>
+          <span class="chip-name">机器学习</span>
+          <span class="chip-count">15+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="physics-materials">
+          <span class="chip-icon">🔮</span>
+          <span class="chip-name">物理与材料</span>
+          <span class="chip-count">7+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="data-viz">
+          <span class="chip-icon">📊</span>
+          <span class="chip-name">数据可视化</span>
+          <span class="chip-count">14+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="sci-databases">
+          <span class="chip-icon">🗄️</span>
+          <span class="chip-name">科学数据库</span>
+          <span class="chip-count">28+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="sci-communication">
+          <span class="chip-icon">📝</span>
+          <span class="chip-name">科学写作</span>
+          <span class="chip-count">20+</span>
+        </a>
+        <a href="#" class="category-chip" data-category="lab-automation">
+          <span class="chip-icon">🔧</span>
+          <span class="chip-name">实验室自动化</span>
+          <span class="chip-count">8+</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scientific-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, var(--color-white) 100%);
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .section-subtitle {
+    color: var(--color-text-secondary);
+    font-size: 1.125rem;
+  }
+
+  .packages-group {
+    margin-bottom: var(--spacing-xl);
+  }
+
+  .group-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-text);
+  }
+
+  .packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--spacing-md);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .packages-grid.recommended {
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
+
+  .package-card {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.2s ease;
+  }
+
+  .package-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .package-card.recommended {
+    border-color: var(--color-primary);
+    background: linear-gradient(135deg, var(--color-white) 0%, rgba(99, 102, 241, 0.05) 100%);
+  }
+
+  .package-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .package-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .package-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .package-description {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .package-meta {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  .skill-count {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-secondary);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+  }
+
+  .btn-download-pack {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .btn-download-pack:hover {
+    background: var(--color-primary-hover);
+  }
+
+  /* 学科分类导航 */
+  .categories-nav {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .category-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .category-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 100px;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: all 0.2s;
+  }
+
+  .category-chip:hover {
+    border-color: var(--color-primary);
+    background: rgba(99, 102, 241, 0.05);
+  }
+
+  .chip-icon {
+    font-size: 1rem;
+  }
+
+  .chip-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .chip-count {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-secondary);
+    padding: 2px 6px;
+    border-radius: 100px;
+  }
+
+  @media (max-width: 768px) {
+    .packages-grid,
+    .packages-grid.recommended {
+      grid-template-columns: 1fr;
+    }
+
+    .package-card {
+      flex-direction: column;
+      text-align: center;
+      align-items: center;
+    }
+
+    .btn-download-pack {
+      width: 100%;
+    }
+
+    .category-chips {
+      justify-content: flex-start;
+    }
+  }
+</style>
+
+<script>
+  // 处理套件下载
+  document.querySelectorAll('.btn-download-pack').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      const packId = (e.target as HTMLElement).dataset.packId;
+      if (!packId) return;
+
+      const button = e.target as HTMLButtonElement;
+      const originalText = button.textContent;
+      button.textContent = '下载中...';
+      button.disabled = true;
+
+      try {
+        // 动态导入下载工具
+        const { skillPackages } = await import('../data/packages');
+        const { skills } = await import('../data/skills');
+        const { downloadSkillPack } = await import('../utils/packager');
+
+        const pack = skillPackages.find(p => p.id === packId);
+        if (pack) {
+          const packSkills = skills.filter(s => pack.skills.includes(s.id));
+          await downloadSkillPack(
+            packSkills.map(s => ({
+              id: s.id,
+              name: s.name,
+              content: s.content
+            })),
+            pack.name
+          );
+        }
+
+        button.textContent = '已下载!';
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 2000);
+      } catch (error) {
+        console.error('Download failed:', error);
+        button.textContent = '下载失败';
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.disabled = false;
+        }, 2000);
+      }
+    });
+  });
+</script>

@@ -6,6 +6,7 @@ export interface SkillPackage {
   icon: string;
   skills: string[];
   recommended: boolean;
+  category?: string; // 所属分类，用于筛选
 }
 
 export const skillPackages: SkillPackage[] = [
@@ -183,6 +184,234 @@ export const skillPackages: SkillPackage[] = [
       'canvas-design'
     ],
     recommended: false
+  },
+  // ===== 科学研究场景包 =====
+  {
+    id: 'drug-discovery',
+    name: '药物发现套件',
+    nameEn: 'Drug Discovery Kit',
+    description: '虚拟筛选、分子对接、ADMET 预测、化合物优化',
+    icon: '💊',
+    skills: [
+      'rdkit',
+      'deepchem',
+      'datamol',
+      'molfeat',
+      'diffdock',
+      'medchem',
+      'torchdrug',
+      'chembl-database',
+      'pubchem-database',
+      'drugbank-database',
+      'zinc-database'
+    ],
+    recommended: true,
+    category: 'scientific'
+  },
+  {
+    id: 'genomics-bioinformatics',
+    name: '基因组学与生物信息学套件',
+    nameEn: 'Genomics & Bioinformatics Kit',
+    description: '序列分析、单细胞 RNA-seq、基因调控网络',
+    icon: '🧬',
+    skills: [
+      'biopython',
+      'scanpy',
+      'anndata',
+      'scvi-tools',
+      'arboreto',
+      'pysam',
+      'gget',
+      'scikit-bio',
+      'etetoolkit',
+      'deeptools',
+      'ensembl-database',
+      'ncbi-gene-database'
+    ],
+    recommended: true,
+    category: 'scientific'
+  },
+  {
+    id: 'clinical-research',
+    name: '临床研究套件',
+    nameEn: 'Clinical Research Kit',
+    description: '临床试验、变异解读、药物基因组学、精准医疗',
+    icon: '🏥',
+    skills: [
+      'clinical-decision-support',
+      'clinical-reports',
+      'treatment-plans',
+      'pyhealth',
+      'neurokit2',
+      'clinvar-database',
+      'clinpgx-database',
+      'clinicaltrials-database',
+      'cosmic-database',
+      'fda-database'
+    ],
+    recommended: true,
+    category: 'scientific'
+  },
+  {
+    id: 'ml-deep-learning',
+    name: '机器学习与深度学习套件',
+    nameEn: 'ML & Deep Learning Kit',
+    description: 'PyTorch、scikit-learn、强化学习、模型解释',
+    icon: '🤖',
+    skills: [
+      'pytorch-lightning',
+      'transformers',
+      'scikit-learn',
+      'scikit-survival',
+      'shap',
+      'stable-baselines3',
+      'pufferlib',
+      'pymc',
+      'pymoo',
+      'torch_geometric',
+      'umap-learn',
+      'aeon'
+    ],
+    recommended: false,
+    category: 'scientific'
+  },
+  {
+    id: 'quantum-physics',
+    name: '量子计算与物理套件',
+    nameEn: 'Quantum & Physics Kit',
+    description: '量子计算、天文学、材料科学',
+    icon: '🔮',
+    skills: [
+      'qiskit',
+      'pennylane',
+      'cirq',
+      'qutip',
+      'astropy',
+      'pymatgen',
+      'sympy'
+    ],
+    recommended: false,
+    category: 'scientific'
+  },
+  {
+    id: 'data-visualization',
+    name: '科学数据可视化套件',
+    nameEn: 'Scientific Data Visualization Kit',
+    description: '统计分析、网络可视化、出版级图表',
+    icon: '📊',
+    skills: [
+      'matplotlib',
+      'seaborn',
+      'plotly',
+      'scientific-visualization',
+      'networkx',
+      'statsmodels',
+      'statistical-analysis',
+      'exploratory-data-analysis',
+      'polars',
+      'dask',
+      'vaex'
+    ],
+    recommended: false,
+    category: 'scientific'
+  },
+  {
+    id: 'scientific-databases',
+    name: '科学数据库套件',
+    nameEn: 'Scientific Databases Kit',
+    description: 'PubMed、UniProt、KEGG 等 28+ 科学数据库访问',
+    icon: '🗄️',
+    skills: [
+      'pubmed-database',
+      'uniprot-database',
+      'pdb-database',
+      'alphafold-database',
+      'kegg-database',
+      'reactome-database',
+      'string-database',
+      'opentargets-database',
+      'openalex-database',
+      'biorxiv-database',
+      'geo-database',
+      'ena-database'
+    ],
+    recommended: false,
+    category: 'scientific'
+  },
+  {
+    id: 'scientific-writing',
+    name: '科学写作与交流套件',
+    nameEn: 'Scientific Writing & Communication Kit',
+    description: '论文写作、同行评审、海报制作、文献管理',
+    icon: '📝',
+    skills: [
+      'scientific-writing',
+      'literature-review',
+      'peer-review',
+      'citation-management',
+      'scientific-slides',
+      'latex-posters',
+      'pptx-posters',
+      'scientific-schematics',
+      'paper-2-web',
+      'venue-templates'
+    ],
+    recommended: false,
+    category: 'scientific'
+  },
+  {
+    id: 'proteomics-multiomics',
+    name: '蛋白质组学与多组学套件',
+    nameEn: 'Proteomics & Multi-omics Kit',
+    description: '质谱分析、蛋白质工程、多组学整合',
+    icon: '🔬',
+    skills: [
+      'matchms',
+      'pyopenms',
+      'esm',
+      'adaptyv',
+      'pydeseq2',
+      'lamindb',
+      'biomni',
+      'denario',
+      'hypogenic'
+    ],
+    recommended: false,
+    category: 'scientific'
+  },
+  {
+    id: 'lab-automation',
+    name: '实验室自动化套件',
+    nameEn: 'Lab Automation Kit',
+    description: '液体处理、实验流程自动化、LIMS 集成',
+    icon: '🔧',
+    skills: [
+      'pylabrobot',
+      'opentrons-integration',
+      'protocolsio-integration',
+      'benchling-integration',
+      'labarchive-integration',
+      'dnanexus-integration',
+      'latchbio-integration',
+      'omero-integration'
+    ],
+    recommended: false,
+    category: 'scientific'
+  },
+  {
+    id: 'medical-imaging',
+    name: '医学影像与病理套件',
+    nameEn: 'Medical Imaging & Pathology Kit',
+    description: 'DICOM 处理、全切片分析、计算病理学',
+    icon: '🖼️',
+    skills: [
+      'pydicom',
+      'histolab',
+      'pathml',
+      'neuropixels-analysis'
+    ],
+    recommended: false,
+    category: 'scientific'
   }
 ];
 
@@ -196,4 +425,14 @@ export function getPackageById(id: string): SkillPackage | undefined {
 
 export function getPackagesBySkill(skillId: string): SkillPackage[] {
   return skillPackages.filter(pkg => pkg.skills.includes(skillId));
+}
+
+// 获取科学研究相关的场景包
+export function getScientificPackages(): SkillPackage[] {
+  return skillPackages.filter(pkg => pkg.category === 'scientific');
+}
+
+// 获取推荐的科学研究套件（首页展示）
+export function getRecommendedScientificPackages(): SkillPackage[] {
+  return skillPackages.filter(pkg => pkg.category === 'scientific' && pkg.recommended);
 }
