@@ -5,7 +5,7 @@ export interface Skill {
   name: string;
   description: string;
   category: Category;
-  source: 'anthropic' | 'claudekit' | 'scientific' | 'community' | 'composio' | 'voltagent';
+  source: 'anthropic' | 'claudekit' | 'scientific' | 'community' | 'composio' | 'voltagent' | 'obsidian';
   triggers: string[];
   priority: number;
   content: string;
@@ -286,7 +286,7 @@ description: |
     id: 'document-skills',
     name: 'Document Skills',
     description: '文档生成、Markdown 处理',
-    category: categories[4],
+    category: categories[5],
     source: 'community',
     triggers: ['文档', 'Markdown', 'readme', '文档生成'],
     priority: 5,
@@ -314,7 +314,7 @@ description: |
     id: 'pdf',
     name: 'PDF',
     description: 'PDF 生成和处理',
-    category: categories[4],
+    category: categories[5],
     source: 'anthropic',
     triggers: ['PDF', 'pdf文件', '导出PDF'],
     priority: 6,
@@ -338,12 +338,92 @@ PDF 文档处理解决方案。
 `
   },
 
+  // Knowledge Management Skills (Obsidian)
+  {
+    id: 'obsidian-markdown',
+    name: 'Obsidian Markdown',
+    description: '创建和编辑 Obsidian 风格的 Markdown 文件，支持 wikilinks、callouts、properties 等',
+    category: categories[6],
+    source: 'obsidian',
+    triggers: ['Obsidian', 'wikilinks', 'callout', 'markdown', '双链', '知识库', 'Obsidian笔记'],
+    priority: 7,
+    content: `---
+name: obsidian-markdown
+description: Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, and other Obsidian-specific syntax. Use when working with .md files in Obsidian, or when the user mentions wikilinks, callouts, frontmatter, tags, embeds, or Obsidian notes.
+---
+
+# Obsidian Flavored Markdown Skill
+
+This skill enables Claude Code to create and edit valid Obsidian Flavored Markdown, including all Obsidian-specific syntax extensions.
+
+## Overview
+
+Obsidian uses a combination of Markdown flavors:
+- [CommonMark](https://commonmark.org/)
+- [GitHub Flavored Markdown](https://github.github.com/gfm/)
+- [LaTeX](https://www.latex-project.org/) for math
+- Obsidian-specific extensions (wikilinks, callouts, embeds, etc.)
+
+For complete syntax reference, see the full SKILL.md file in obsidian-skills/obsidian-markdown/
+`
+  },
+  {
+    id: 'obsidian-bases',
+    name: 'Obsidian Bases',
+    description: '创建和编辑 Obsidian Bases 格式文件，支持数据库视图和结构化数据',
+    category: categories[6],
+    source: 'obsidian',
+    triggers: ['Obsidian Bases', 'base文件', '数据库视图', 'Obsidian数据库', 'Bases', '视图'],
+    priority: 6,
+    content: `---
+name: obsidian-bases
+version: "1.0.0"
+description: Create and edit Obsidian Bases (.base files) with views, filters, formulas, and summaries. Use when working with .base files, creating database-like views of notes, or when the user mentions Bases, table views, card views, filters, or formulas in Obsidian.
+---
+
+# Obsidian Bases Skill
+
+This skill enables Claude Code to create and edit valid Obsidian Bases (\`.base\` files) including views, filters, formulas, and all related configurations.
+
+## Overview
+
+Obsidian Bases are YAML-based files that define dynamic views of notes in an Obsidian vault. A Base file can contain multiple views, global filters, formulas, property configurations, and custom summaries.
+
+For complete syntax reference, see the full SKILL.md file in obsidian-skills/obsidian-bases/
+`
+  },
+  {
+    id: 'json-canvas',
+    name: 'JSON Canvas',
+    description: '创建和编辑 JSON Canvas 无限画布文件，可视化知识图谱',
+    category: categories[6],
+    source: 'obsidian',
+    triggers: ['JSON Canvas', 'canvas', '画布', '可视化', '知识图谱', 'Canvas文件', '无限画布'],
+    priority: 6,
+    content: `---
+name: json-canvas
+version: "1.0.0"
+description: Create and edit JSON Canvas files (.canvas) with nodes, edges, groups, and connections. Use when working with .canvas files, creating visual canvases, mind maps, flowcharts, or when the user mentions Canvas files in Obsidian.
+---
+
+# JSON Canvas Skill
+
+This skill enables Claude Code to create and edit valid JSON Canvas files (\`.canvas\`) used in Obsidian and other applications.
+
+## Overview
+
+JSON Canvas is an open file format for infinite canvas data. Canvas files use the \`.canvas\` extension and contain valid JSON following the [JSON Canvas Spec 1.0](https://jsoncanvas.org/spec/1.0/).
+
+For complete syntax reference, see the full SKILL.md file in obsidian-skills/json-canvas/
+`
+  },
+
   // Media Skills
   {
     id: 'image-enhancer',
     name: 'Image Enhancer',
     description: '图片增强和处理',
-    category: categories[5],
+    category: categories[7],
     source: 'community',
     triggers: ['图片', '图像', '增强', 'Image'],
     priority: 5,
@@ -372,7 +452,7 @@ description: |
     id: 'sequential-thinking',
     name: 'Sequential Thinking',
     description: '逐步推理和顺序思考',
-    category: categories[6],
+    category: categories[8],
     source: 'claudekit',
     triggers: ['顺序思考', '逐步推理', '逻辑推理'],
     priority: 4,
@@ -401,7 +481,7 @@ description: |
     id: 'mcp-builder',
     name: 'MCP Builder',
     description: 'MCP 服务器创建和开发',
-    category: categories[7],
+    category: categories[9],
     source: 'community',
     triggers: ['MCP', '服务器', '集成', 'Model Context Protocol'],
     priority: 6,
@@ -429,7 +509,7 @@ MCP 服务器开发和集成。
     id: 'browser-automation',
     name: 'Browser Automation',
     description: '浏览器自动化和网页抓取',
-    category: categories[7],
+    category: categories[9],
     source: 'community',
     triggers: ['浏览器', '自动化', '抓取', 'Puppeteer', 'Playwright'],
     priority: 5,

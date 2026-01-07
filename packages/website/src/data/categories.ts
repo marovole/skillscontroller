@@ -125,6 +125,13 @@ export const categories: Category[] = [
     icon: '📄'
   },
   {
+    id: 'knowledge',
+    name: '知识管理',
+    nameEn: 'Knowledge',
+    description: 'Obsidian、笔记系统、知识库管理',
+    icon: '📓'
+  },
+  {
     id: 'media',
     name: '媒体处理',
     nameEn: 'Media',

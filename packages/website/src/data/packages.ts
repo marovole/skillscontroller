@@ -59,6 +59,20 @@ export const skillPackages: SkillPackage[] = [
     recommended: true
   },
   {
+    id: 'knowledge-management',
+    name: '知识管理套件',
+    nameEn: 'Knowledge Management Kit',
+    description: 'Obsidian 笔记系统、知识库管理、可视化',
+    icon: '📓',
+    skills: [
+      'obsidian-markdown',
+      'obsidian-bases',
+      'json-canvas',
+      'document-skills'
+    ],
+    recommended: true
+  },
+  {
     id: 'devops-engineer',
     name: 'DevOps 工程师套件',
     nameEn: 'DevOps Engineer Kit',

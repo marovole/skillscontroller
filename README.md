@@ -30,6 +30,7 @@
 | [![ClaudeKit](https://github.githubassets.com/favicons/favicon.svg) ClaudeKit](https://github.com/mrgoonie/claudekit-skills) | 1.1k | 39 | MIT |
 | [![Scientific Skills](https://github.githubassets.com/favicons/favicon.svg) Scientific Skills](https://github.com/K-Dense-AI/claude-scientific-skills) | 2.9k | 138 | MIT |
 | [![Deep Research](https://github.githubassets.com/favicons/favicon.svg) Deep Research](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) | 55 | 5 | - |
+| [![Obsidian Skills](https://github.githubassets.com/favicons/favicon.svg) Obsidian Skills](https://github.com/kepano/obsidian-skills) | [![160](https://img.shields.io/badge/⭐-160-blue)](https://github.com/kepano/obsidian-skills) | 3 | MIT |
 | [![superpowers-marketplace](https://github.githubassets.com/favicons/favicon.svg) superpowers-marketplace](https://github.com/obra/superpowers-marketplace) | 51 forks | TBD | MIT |
 | [![superpowers-lab](https://github.githubassets.com/favicons/favicon.svg) superpowers-lab](https://github.com/obra/superpowers-lab) | 7 forks | TBD | MIT |
 
@@ -54,27 +55,32 @@
 
 **包含技能**：`doc-coauthoring`, `docx`, `pdf`, `pptx`, `xlsx`, `changelog-generator`
 
-### 4. DevOps 工程师套件
+### 4. 知识管理套件
+Obsidian 笔记系统、知识库管理、可视化知识图谱。
+
+**包含技能**：`obsidian-markdown`, `obsidian-bases`, `json-canvas`, `document-skills`
+
+### 5. DevOps 工程师套件
 CI/CD、容器化、部署自动化相关技能。
 
 **包含技能**：`devops`, `docker`, `mcp-builder`, `skill-creator`
 
-### 5. 内容创作套件
+### 6. 内容创作套件
 适合内容创作者和营销人员。
 
 **包含技能**：`content-research-writer`, `brand-guidelines`, `internal-comms`, `slack-gif-creator`
 
-### 6. 研究分析套件
+### 7. 研究分析套件
 深度研究和数据分析相关技能。
 
 **包含技能**：`lead-research-assistant`, `developer-growth-analysis`, `competitive-ads-extractor`
 
-### 7. 媒体处理套件
+### 8. 媒体处理套件
 图片、视频等媒体文件处理。
 
 **包含技能**：`image-enhancer`, `video-downloader`, `canvas-design`, `algorithmic-art`
 
-### 8. 效率工具套件
+### 9. 效率工具套件
 提升日常工作效率的实用技能。
 
 **包含技能**：`file-organizer`, `invoice-organizer`, `meeting-insights-analyzer`, `raffle-winner-picker`, `domain-name-brainstormer`
@@ -142,6 +148,7 @@ skillscontroller/
 ├── claudekit-skills/            # ClaudeKit 技能 (submodule)
 ├── composio-skills/             # Composio 技能 (submodule)
 ├── scientific-skills/           # Scientific Skills 科学技能库 (submodule)
+├── obsidian-skills/             # Obsidian 知识管理技能 (submodule)
 └── voltagent-skills/            # VoltAgent 技能 (submodule)
 ```
 
@@ -173,8 +180,9 @@ pnpm preview
 | **后端开发** | API、数据库、认证 | 4 |
 | **测试质量** | E2E 测试、代码审查 | 3 |
 | **DevOps** | CI/CD、Docker、部署 | 3 |
-| **文档处理** | PDF、Word、PPT、Excel | 6 |
-| **媒体处理** | 图片、视频、GIF | 4 |
+| **文档处理** | PDF、Word、PPT、Excel | 2 |
+| **知识管理** | Obsidian、笔记系统、知识库 | 3 |
+| **媒体处理** | 图片、视频、GIF | 1 |
 | **内容创作** | 品牌、沟通、研究 | 5 |
 | **工具集成** | MCP、浏览器自动化 | 4 |
 | **效率提升** | 文件整理、会议分析 | 5 |
@@ -233,6 +241,7 @@ license: MIT
 | **claudekit-skills** | [mrgoonie](https://github.com/mrgoonie) | [github.com/mrgoonie/claudekit-skills](https://github.com/mrgoonie/claudekit-skills) |
 | **claude-scientific-skills** | [K-Dense AI](https://github.com/K-Dense-AI) | [github.com/K-Dense-AI/claude-scientific-skills](https://github.com/K-Dense-AI/claude-scientific-skills) |
 | **Claude-Code-Deep-Research-main** | [liangdabiao](https://github.com/liangdabiao) | [github.com/liangdabiao/Claude-Code-Deep-Research-main](https://github.com/liangdabiao/Claude-Code-Deep-Research-main) |
+| **obsidian-skills** | [kepano](https://github.com/kepano) | [github.com/kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) |
 
 **特别说明**：本项目仅为技能聚合展示平台，所有技能的版权归各自原作者所有。
 

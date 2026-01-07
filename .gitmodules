@@ -22,3 +22,6 @@
 [submodule "voltagent-skills"]
 	path = voltagent-skills
 	url = https://github.com/VoltAgent/voltagent.git
+[submodule "obsidian-skills"]
+	path = obsidian-skills
+	url = https://github.com/kepano/obsidian-skills.git
