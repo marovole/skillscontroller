@@ -39,6 +39,16 @@ function resolveSkills(packId: string | null, skillIds: string[] | null): SkillI
   return skills;
 }
 
+// 转义 shell 特殊字符，防止命令注入
+function escapeShellArg(arg: string): string {
+  return arg.replace(/[`$"\\!]/g, '\\$&').replace(/'/g, "'\\''");
+}
+
+// 验证技能 ID 格式（只允许字母、数字、连字符和下划线）
+function isValidSkillId(id: string): boolean {
+  return /^[a-zA-Z0-9_-]+$/.test(id);
+}
+
 // 生成安装脚本
 function generateInstallScript(skills: SkillInfo[], baseUrl: string, packName?: string): string {
   if (skills.length === 0) {
@@ -48,9 +58,20 @@ exit 1
 `;
   }
 
-  const skillDownloads = skills.map(skill => {
-    const apiUrl = `${baseUrl}/api/skill-content?source=${skill.source}&path=${skill.path}`;
-    return `  download_skill "${skill.id}" "${apiUrl}"`;
+  const validSkills = skills.filter(skill => isValidSkillId(skill.id));
+  if (validSkills.length === 0) {
+    return `#!/bin/bash
+echo "错误: 没有有效的技能 ID"
+exit 1
+`;
+  }
+
+  const skillDownloads = validSkills.map(skill => {
+    const safeId = escapeShellArg(skill.id);
+    const safeSource = escapeShellArg(skill.source);
+    const safePath = escapeShellArg(skill.path);
+    const apiUrl = `${baseUrl}/api/skill-content?source=${safeSource}&path=${safePath}`;
+    return `  download_skill "${safeId}" "${apiUrl}"`;
   }).join('\n');
 
   return `#!/bin/bash

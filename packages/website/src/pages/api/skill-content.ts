@@ -3,6 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs/promises';
 
+// 禁用预渲染，使用服务端渲染
+export const prerender = false;
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const SOURCE_BASE_PATHS: Record<string, string> = {
@@ -45,9 +48,22 @@ export const GET: APIRoute = async ({ url }) => {
       status: 200,
       headers: { 'Content-Type': 'text/markdown' }
     });
-  } catch {
-    return new Response(JSON.stringify({ error: 'File not found' }), {
-      status: 404,
+  } catch (err) {
+    const error = err as NodeJS.ErrnoException;
+    if (error.code === 'ENOENT') {
+      return new Response(JSON.stringify({ error: 'File not found', path: fullPath }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    if (error.code === 'EACCES') {
+      return new Response(JSON.stringify({ error: 'Permission denied' }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    return new Response(JSON.stringify({ error: 'Internal server error', message: error.message }), {
+      status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
   }
